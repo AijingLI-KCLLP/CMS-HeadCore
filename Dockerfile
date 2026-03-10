@@ -14,7 +14,12 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x -o nodesource_setup.sh
 RUN bash nodesource_setup.sh
 RUN apt-get install -y nodejs
 
+# Composer install
+COPY composer.json /var/www/html/composer.json
+RUN composer install --no-dev --optimize-autoloader --working-dir=/var/www/html
+
 # Apache
+COPY docker/apache.conf /etc/apache2/sites-available/000-default.conf
 RUN a2enmod rewrite
 RUN service apache2 restart
 

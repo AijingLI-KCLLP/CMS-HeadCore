@@ -2,13 +2,21 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Core\Config\Config;
+use Core\Http\Request;
+use Core\Http\Response;
+use Core\Http\Router;
 
-// Test Config
-$routes = config('routes');
-$sessionLifetime = config('auth.session_lifetime');
-$missing = config('auth.nonexistent', 'default_value');
-
-echo "routes: " . json_encode($routes) . "\n";
-echo "auth.session_lifetime: $sessionLifetime\n";
-echo "auth.nonexistent (default): $missing\n";
+try {
+    $request = new Request();
+    $response = Router::route($request);
+    $response->send();
+    exit();
+} catch (\RuntimeException $e) {
+    Response::error($e->getMessage(), 400)->send();
+} catch (\Exception $e) {
+    $status = $e->getCode();
+    if (!is_int($status) || $status < 400 || $status > 599) {
+        $status = 500;
+    }
+    Response::error($e->getMessage(), $status)->send();
+}

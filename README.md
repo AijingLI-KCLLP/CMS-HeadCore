@@ -63,12 +63,11 @@ docker-compose down -v
 /app        → fonctionnalités CMS (Controllers, Entities, Repositories, Services)
 /core       → framework PHP maison (Router, ORM, Http, Database…)
 /public     → front controller, point d'entrée unique (index.php),  il reçoit toutes les requêtes et les dispatche au bon endroit.
-/resources  → SCSS et JS
+/resources  → SCSS et JS pour le front du back office
 /doc        → diagrammes UML et flux
 ```
 
 ## Diagrammes
 
 ![UML](doc/UML.png)
-
 ![Diagramme de flux](doc/flow.png)

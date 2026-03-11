@@ -6,6 +6,12 @@ use Core\Http\Request;
 use Core\Http\Response;
 use Core\Http\Router;
 
+// Test hydratation — à supprimer après validation
+$row = ['id' => 1, 'name' => 'Ali', 'email' => 'ali@test.com', 'password' => 'hashed', 'created_at' => '2025-01-01'];
+$user = \App\Entities\User::hydrate($row);
+echo $user->getName() . ' / ' . $user->getEmail();
+exit();
+
 try {
     $request = new Request();
     $response = Router::route($request);

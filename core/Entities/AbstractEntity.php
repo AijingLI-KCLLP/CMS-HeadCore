@@ -51,41 +51,59 @@ abstract class AbstractEntity {
 
     public function toArray(): array {
         $array = [];
-        foreach ($this as $key => $value) {
-            $array[$key] = $value;
+        $reflection = new \ReflectionClass($this);
+        foreach ($reflection->getProperties() as $property) {
+            $property->setAccessible(true);
+            if ($property->isInitialized($this)) {
+                $array[$property->getName()] = $property->getValue($this);
+            }
         }
         return $array;
     }
 
     public function extractColumns(): array {
         $classAnnotationsDump = AnnotationReader::extractFromClass($this::class);
+        $reflection = new \ReflectionClass($this);
 
         $columns = [];
 
-        $propertiesWithColumnAnnotation = $classAnnotationsDump->getPropertiesWithAnnotation(Column::class);
-        foreach($propertiesWithColumnAnnotation as $property) {
-            if($property->hasAnnotation(Id::class) === true) {
+        foreach ($classAnnotationsDump->getPropertiesWithAnnotation(Column::class) as $property) {
+            if ($property->hasAnnotation(Id::class)) {
                 continue;
             }
-            $propertyName = $property->getName();
-            if($property->getAnnotation(Column::class)->name !== null) {
-                $propertyName = $property->getAnnotation(Column::class)->name;
+
+            $prop = $reflection->getProperty($property->getName());
+            $prop->setAccessible(true);
+            if (!$prop->isInitialized($this)) {
+                continue;
             }
 
-            $columns[] = $propertyName;
+            $colAnnotation = $property->getAnnotation(Column::class);
+            $columns[] = $colAnnotation->name ?? $property->getName();
         }
 
         return $columns;
     }
 
-    public function getValues() {
-        $columns = $this->extractColumns();
+    public function getValues(): array {
+        $classAnnotationsDump = AnnotationReader::extractFromClass($this::class);
+        $reflection = new \ReflectionClass($this);
 
         $array = [];
-        
-        foreach($this as $key => $value) {
-            if(in_array($key, $columns)) {
-                $array[$key] = $value;
+
+        foreach ($classAnnotationsDump->getPropertiesWithAnnotation(Column::class) as $propDump) {
+            if ($propDump->hasAnnotation(Id::class)) {
+                continue;
+            }
+
+            $colAnnotation = $propDump->getAnnotation(Column::class);
+            $columnName = $colAnnotation->name ?? $propDump->getName();
+
+            $prop = $reflection->getProperty($propDump->getName());
+            $prop->setAccessible(true);
+
+            if ($prop->isInitialized($this)) {
+                $array[$columnName] = $prop->getValue($this);
             }
         }
 

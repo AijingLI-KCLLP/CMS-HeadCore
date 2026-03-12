@@ -124,7 +124,45 @@ abstract class AbstractRepository
             ->where('id', QueryConditions::EQ)
             ->addParam('id', $entity->getId())
         ;
-    
+
         $this->executeQuery();
+    }
+
+    public function raw(string $sql, array $params = []): array {
+        $this->getQueryBuilder()->raw($sql, $params);
+        return $this->executeQuery()->getAllResults();
+    }
+
+    public function paginate(int $page, int $perPage = 10, array $criteria = []): array {
+        $offset = ($page - 1) * $perPage;
+
+        $this->getQueryBuilder()
+            ->build()
+            ->select()
+            ->from()
+            ->addWhereAccordingToCriterias($criteria)
+            ->limit($perPage)
+            ->offset($offset)
+        ;
+
+        $items = $this->executeQuery()->getAllResults();
+
+        $this->getQueryBuilder()
+            ->build()
+            ->count()
+            ->from()
+            ->addWhereAccordingToCriterias($criteria)
+        ;
+        $total = (int) $this->db->getConnexion()
+            ->query($this->queryBuilder->getQueryString())
+            ->fetchColumn();
+
+        return [
+            'data'        => $items,
+            'total'       => $total,
+            'page'        => $page,
+            'per_page'    => $perPage,
+            'total_pages' => (int) ceil($total / $perPage),
+        ];
     }
 }

@@ -68,6 +68,83 @@ docker-compose down -v
 ```
 
 ## Diagrammes
+```mermaid
+classDiagram
+direction LR
+
+class User {
+  +id
+  +name
+  +email
+  +passwordHash
+  +status
+  +createdAt
+  +updatedAt
+}
+
+class Role {
+  +id
+  +name
+}
+
+class Content {
+  +id
+  +title
+  +slug
+  +body
+  +status
+  +createdAt
+  +updatedAt
+  +publishedAt
+}
+
+class Category {
+  +id
+  +name
+  +slug
+}
+
+class Tag {
+  +id
+  +name
+  +slug
+}
+
+class Media {
+  +id
+  +fileName
+  +filePath
+  +altText
+  +mimeType
+  +createdAt
+  +updatedAt
+}
+
+class Version {
+  +id
+  +versionNumber
+  +title
+  +body
+  +createdAt
+}
+
+class AuditLog {
+  +id
+  +action
+  +entityType
+  +entityId
+  +createdAt
+}
+
+User "0..*" --> "1" Role : has
+User "1" --> "0..*" Content : creates
+Content "0..*" --> "0..1" Category : belongs to
+Content "0..*" --> "0..*" Tag : has
+Content "0..*" --> "0..*" Media : uses
+Content "1" --> "0..*" Version : has
+User "1" --> "0..*" AuditLog : performs
+```
+
 
 ![UML](doc/UML.png)
 ![Diagramme de flux](doc/flow.png)

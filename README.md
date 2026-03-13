@@ -68,6 +68,7 @@ docker-compose down -v
 ```
 
 ## Diagrammes
+UML
 ```mermaid
 classDiagram
 direction LR
@@ -144,7 +145,62 @@ Content "0..*" --> "0..*" Media : uses
 Content "1" --> "0..*" Version : has
 User "1" --> "0..*" AuditLog : performs
 ```
+Diagramme de flux
+```mermaid
+flowchart TD
+    A[Utilisateur arrive sur le CMS] --> B{Connecté ?}
 
+    B -- Non --> C[Page de connexion]
+    C --> D[Saisie email + mot de passe]
+    D --> E{Identifiants valides ?}
+    E -- Non --> C
+    E -- Oui --> F{Rôle utilisateur}
 
-![UML](doc/UML.png)
-![Diagramme de flux](doc/flow.png)
+    B -- Oui --> F{Rôle utilisateur}
+
+    %% Gestion accès
+    F -- Lecteur --> R1[Accès refusé au back-office]
+    F -- Auteur / Éditeur / Admin --> G[Accès au back-office]
+
+    %% Actions
+    G --> H{Action choisie}
+    
+    H --> I[Créer un contenu]
+    H --> J[Modifier un contenu]
+    H --> K[Supprimer un contenu]
+    H --> L[Gérer catégories / tags]
+    H --> M[Gérer médias]
+
+    %% Création
+    I --> N[Saisie des informations]
+    N --> O[Enregistrer en brouillon]
+
+    %% Modification
+    J --> P[Mettre à jour le contenu]
+    P --> Q[Enregistrer les modifications]
+
+    %% Workflow
+    O --> S{Demander publication ?}
+    Q --> S
+
+    S -- Non --> T[Contenu reste en brouillon]
+    S -- Oui --> U{Rôle autorisé à publier ?}
+
+    %% Rôles publication
+    U -- Auteur --> V[Envoyer en relecture]
+    U -- Éditeur / Admin --> W[Publier le contenu]
+
+    %% Validation
+    V --> X[Relecture par éditeur/admin]
+    X --> Y{Validé ?}
+    Y -- Non --> Z[Retour en brouillon]
+    Y -- Oui --> W[Publier le contenu]
+
+    %% Résultat final
+    W --> AA[Contenu visible sur le site / API publique]
+
+    %% Suppression
+    K --> AB{Rôle autorisé ?}
+    AB -- Admin --> AC[Suppression définitive]
+    AB -- Auteur / Éditeur --> AD[Archivage du contenu]
+```

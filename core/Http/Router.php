@@ -2,19 +2,18 @@
 
 namespace Core\Http;
 
+use Core\Config\Config;
 use Core\Controllers\AbstractController;
 
 
 class Router {
 
     const string CONTROLLER_NAMESPACE_PREFIX = "App\\Controllers\\";
-    const string ROUTE_CONFIG_PATH = __DIR__ . '/../../../config/routes.json';
-    
 
     public static function route(Request $request): Response {
-        $config = self::getConfig();
+        $routes = Config::get('routes');
 
-        foreach($config as $route) {
+        foreach($routes as $route) {
             if(self::checkMethod($request, $route) === false || self::checkUri($request, $route) === false) {
                 continue;
             }
@@ -24,13 +23,6 @@ class Router {
         }
 
         throw new \Exception('Route not found', 404);
-    }
-    
-    private static function getConfig(): array {
-        $routesConfigContent = file_get_contents(self::ROUTE_CONFIG_PATH);
-        $routesConfig = json_decode($routesConfigContent, true);
-
-        return $routesConfig;
     }
 
 

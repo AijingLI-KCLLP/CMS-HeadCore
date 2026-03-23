@@ -15,6 +15,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - .:/var/www/html
+      - vendor_data:/var/www/html/vendor
     ports:
       - 80:80
     depends_on:
@@ -56,3 +57,4 @@ networks:
 
 volumes:
   headcore-db-data:
+  vendor_data:

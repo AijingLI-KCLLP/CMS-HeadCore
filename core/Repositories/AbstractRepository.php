@@ -41,17 +41,22 @@ abstract class AbstractRepository
 
     public function executeQuery(): self {
         $this->query = $this->db->getConnexion()->prepare($this->queryBuilder->getQueryString());
-        $this->query->setFetchMode(\PDO::FETCH_CLASS, $this->entity->getName());
         $this->query->execute($this->queryBuilder->getParams());
         return $this;
     }
 
-    public function getOneResult(): AbstractEntity {
-        return $this->query->fetch();
+    public function getOneResult(): AbstractEntity|false {
+        $row = $this->query->fetch(\PDO::FETCH_ASSOC);
+        if ($row === false) {
+            return false;
+        }
+        return $this->entity->getName()::hydrate($row);
     }
 
     public function getAllResults(): array {
-        return $this->query->fetchAll();
+        $rows = $this->query->fetchAll(\PDO::FETCH_ASSOC);
+        $entityClass = $this->entity->getName();
+        return array_map(fn($row) => $entityClass::hydrate($row), $rows);
     }
 
     public function find(string | int $id) {

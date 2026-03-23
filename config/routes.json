@@ -1,4 +1,7 @@
 [
-    { "path": "/test", "method": "GET", "controller": "TestController" },
-    { "path": "/test/{id}", "method": "GET", "controller": "TestController" }
+    { "path": "/test",       "method": "GET",  "controller": "TestController" },
+    { "path": "/test/{id}",  "method": "GET",  "controller": "TestController" },
+    { "path": "/users",      "method": "GET",  "controller": "UserController" },
+    { "path": "/users",      "method": "POST", "controller": "UserController" },
+    { "path": "/users/{id}", "method": "GET",  "controller": "UserController" }
 ]

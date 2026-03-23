@@ -42,12 +42,8 @@ class Request {
         return $this->slugs;
     }
 
-    public function getSlug(string $key): string {
-        if(!isset($this->slugs[$key])) {
-            return '';
-        }
-        
-        return $this->slugs[$key];
+    public function getSlug(string $key): ?string {
+        return $this->slugs[$key] ?? null;
     }
 
     public function getUrlParams(): array {

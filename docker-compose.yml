@@ -36,7 +36,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - headcore-db-data:/var/lib/postgresql/data
+      - headcore-db-data:/var/lib/postgresql
     restart: unless-stopped
     networks:
       - headcore-net

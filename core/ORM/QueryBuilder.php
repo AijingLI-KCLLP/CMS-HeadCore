@@ -2,16 +2,27 @@
 
 namespace Core\ORM;
 
+use Core\Annotations\AnnotationReader;
+use Core\Annotations\ORM\ORM;
 use Core\Entities\AbstractEntity;
 
 class QueryBuilder {
     private string $queryString;
     private \ReflectionClass $table;
-    private string $tableAlias;
+    private string $tableName;
+    private string $tableAlias = '';
     private array $params = [];
 
     public function __construct(\ReflectionClass $table) {
         $this->table = $table;
+        $dump = AnnotationReader::extractFromClass($table->getName());
+        if ($dump->hasAnnotation(ORM::class)) {
+            /** @var ORM $orm */
+            $orm = $dump->getAnnotation(ORM::class);
+            $this->tableName = $orm->table;
+        } else {
+            $this->tableName = $table->getShortName();
+        }
     }
     
     public function build(): self {
@@ -33,7 +44,7 @@ class QueryBuilder {
 
     public function insert(AbstractEntity $entity): self {
         $this->queryString .= "INSERT INTO ";
-        $this->queryString .= $this->table->getShortName();
+        $this->queryString .= $this->tableName;
         $this->queryString .= ' (';
         $this->queryString .= implode(', ', $entity->extractColumns());
         $this->queryString .= ') ';
@@ -61,13 +72,13 @@ class QueryBuilder {
     }
 
     public function updateTable(?string $table = null): self {
-        $table = $table ?? $this->table->getShortName();
+        $table = $table ?? $this->tableName;
         $this->queryString .= "UPDATE $table";
         return $this;
     }
     
     public function from(string | null $tableAlias = null): self {
-        $table = $this->table->getShortName();
+        $table = $this->tableName;
         $this->queryString .= " FROM $table";
 
         if($tableAlias !== null) {
@@ -90,21 +101,30 @@ class QueryBuilder {
     }
 
     public function andWhere(string $field, QueryConditions $condition, ?string $table = null): self {
-        $this->queryString .= " AND  ";
-        return $this->where($field, $condition, $table);
+        $this->queryString .= " AND ";
+        $prefix = $table ?? $this->tableAlias;
+        if ($prefix !== '') {
+            $this->queryString .= "$prefix.";
+        }
+        $this->queryString .= "$field {$condition->value} :$field";
+        return $this;
     }
 
     public function orWhere(string $field, QueryConditions $condition, ?string $table = null): self {
-        $this->queryString .= " OR  ";
-        return $this->where($field, $condition, $table);
+        $this->queryString .= " OR ";
+        $prefix = $table ?? $this->tableAlias;
+        if ($prefix !== '') {
+            $this->queryString .= "$prefix.";
+        }
+        $this->queryString .= "$field {$condition->value} :$field";
+        return $this;
     }
 
     public function where(string $field, QueryConditions $condition, ?string $table = null): self {
         $this->queryString .= " WHERE ";
-        if($table !== null) {
-            $this->queryString .= "$table.";
-        }else {
-            $this->queryString .= "$this->tableAlias.";
+        $prefix = $table ?? $this->tableAlias;
+        if ($prefix !== '') {
+            $this->queryString .= "$prefix.";
         }
 
         $this->queryString .= "$field {$condition->value} :$field";

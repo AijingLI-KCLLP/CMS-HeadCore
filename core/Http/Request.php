@@ -61,4 +61,22 @@ class Request {
     public function getPayload(): string {
         return $this->payload;
     }
+
+    public function getContentType(): string {
+        return $this->headers['Content-Type'] ?? '';
+    }
+
+    public function expectsJson(): bool {
+        $accept = $this->headers['Accept'] ?? '';
+        $contentType = $this->getContentType();
+        return str_contains($accept, 'application/json') || str_contains($contentType, 'application/json');
+    }
+
+    public function getJsonBody(): array {
+        $data = json_decode($this->payload, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \RuntimeException('Invalid JSON body: ' . json_last_error_msg());
+        }
+        return $data ?? [];
+    }
 }

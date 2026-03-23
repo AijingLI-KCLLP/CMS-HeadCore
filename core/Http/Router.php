@@ -44,7 +44,7 @@ class Router {
                     return false;
                 }
             }else{
-                $request->addSlug(substr($part, 1), $requestUriParts[$key]);
+                $request->addSlug(self::slugName($part), $requestUriParts[$key]);
             }
         }
 
@@ -76,7 +76,11 @@ class Router {
     }
 
     private static function isUrlPartSlug(string $part): bool {
-        return strpos($part, ':') === 0;
+        return preg_match('/^\{[a-zA-Z_][a-zA-Z0-9_]*\}$/', $part) === 1;
+    }
+
+    private static function slugName(string $part): string {
+        return trim($part, '{}');
     }
 
 }

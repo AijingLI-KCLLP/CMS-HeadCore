@@ -7,6 +7,34 @@ class Response {
     private int $status;
     private array $headers;
 
+    public static function json(mixed $data, int $status = 200, array $headers = []): self {
+        $content = json_encode($data, JSON_UNESCAPED_UNICODE);
+        if ($content === false) {
+            $content = json_encode(['error' => 'Failed to encode JSON']);
+            $status = 500;
+        }
+        $headers['Content-Type'] = 'application/json';
+        return new self($content, $status, $headers);
+    }
+
+    public static function error(string $message, int $status): self {
+        return self::json(['error' => $message], $status);
+    }
+
+    public function send(): void {
+        http_response_code($this->status);
+        foreach ($this->headers as $name => $value) {
+            if (is_array($value)) {
+                foreach ($value as $v) {
+                    header("$name: $v");
+                }
+            } else {
+                header("$name: $value");
+            }
+        }
+        echo $this->content;
+    }
+
     public function __construct(string $content = '', int $status = 200, array $headers = [])
     {
         $this->content = $content;

@@ -1,0 +1,14 @@
+{
+    "name": "headcore/cms",
+    "type": "project",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Core\\": "core/",
+            "App\\": "app/"
+        },
+        "files": [
+            "core/helpers.php"
+        ]
+    }
+}

@@ -3,8 +3,6 @@
 namespace Core\Database;
 
 class Dsn {
-    const string DATABASE_CONFIG_PATH = __DIR__ . '/../../../config/database.json';
-    
     private string $host;
     private string $user;
     private string $password;
@@ -13,14 +11,17 @@ class Dsn {
     private string $dsn;
 
     public function __construct() {
-        $config = self::getConfig();
+        $driver = getenv('POSTGRES_DRIVER') ?: 'pgsql';
+        if ($driver !== 'pgsql') {
+            throw new \RuntimeException("SGBD non supporté : seul PostgreSQL est autorisé.");
+        }
 
-        $this->host = $config['host'];
-        $this->user = $config['user'];
-        $this->password = $config['password'];
-        $this->dbname = $config['database'];
-        $this->port = $config['port'];
-        $this->dsn = 'mysql:';
+        $this->host     = getenv('POSTGRES_HOST') ?: 'localhost';
+        $this->user     = getenv('POSTGRES_USER') ?: '';
+        $this->password = getenv('POSTGRES_PASSWORD') ?: '';
+        $this->dbname   = getenv('POSTGRES_DB') ?: '';
+        $this->port     = (int)(getenv('POSTGRES_PORT') ?: 5432);
+        $this->dsn      = 'pgsql:';
     }
 
     public function getUser(): string {
@@ -53,10 +54,4 @@ class Dsn {
     public function getDbName(): string {
         return $this->dbname;
     }
-
-    private static function getConfig(): array {
-        $file = file_get_contents(self::DATABASE_CONFIG_PATH);
-        return json_decode($file, true);
-    }
-    
 }

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Entities\User;
 use App\Repositories\UserRepository;
+use Core\Auth\PasswordHasher;
 use Core\Services\AbstractService;
 
 class UserService extends AbstractService
@@ -39,7 +40,7 @@ class UserService extends AbstractService
         $user = (new User())
             ->setName($name)
             ->setEmail($email)
-            ->setPassword(password_hash($password, PASSWORD_BCRYPT));
+            ->setPassword(PasswordHasher::hash($password));
 
         return $this->repository->save($user);
     }

@@ -1,0 +1,30 @@
+version: '1.0'
+
+services:
+  headcore-frontend:
+    image: node:20-alpine
+
+  headcore-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+  headcore-db-postgre:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: ahhhhhhhh
+      POSTGRES_USER: bhhhhhhh
+      POSTGRES_PASSWORD: chhhhhhhh
+    restart: unless-stopped
+
+  headcore-dbadminer:
+    image: adminer:5.4
+    restart: unless-stopped
+    environment:
+      # todo
+    ports:
+      - 8080:80
+
+networks:
+
+volumes:

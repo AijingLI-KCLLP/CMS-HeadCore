@@ -60,7 +60,8 @@ class QueryBuilder {
         return $this;
     }
 
-    public function updateTable(string $table): self {
+    public function updateTable(?string $table = null): self {
+        $table = $table ?? $this->table->getShortName();
         $this->queryString .= "UPDATE $table";
         return $this;
     }
@@ -77,10 +78,8 @@ class QueryBuilder {
     }
     
     public function set(AbstractEntity $entity): self {
-
-        $this->queryString .= " SET";
-        $this->queryString = implode(', ', $entity->extractColumns());
-
+        $pairs = array_map(fn($col) => "$col = :$col", $entity->extractColumns());
+        $this->queryString .= " SET " . implode(', ', $pairs);
         return $this;
     }
     
@@ -108,7 +107,7 @@ class QueryBuilder {
             $this->queryString .= "$this->tableAlias.";
         }
 
-        $this->queryString .= "$field $condition :$field";
+        $this->queryString .= "$field {$condition->value} :$field";
         return $this;
     }
 
@@ -135,6 +134,57 @@ class QueryBuilder {
             }
             $this->addParam($key, $value);
         }
+    }
+
+    public function orderBy(string $field, string $direction = 'ASC'): self {
+        $direction = strtoupper($direction) === 'DESC' ? 'DESC' : 'ASC';
+        $this->queryString .= " ORDER BY $field $direction";
+        return $this;
+    }
+
+    public function limit(int $limit): self {
+        $this->queryString .= " LIMIT $limit";
+        return $this;
+    }
+
+    public function offset(int $offset): self {
+        $this->queryString .= " OFFSET $offset";
+        return $this;
+    }
+
+    public function count(string $field = '*'): self {
+        $this->queryString .= "SELECT COUNT($field)";
+        return $this;
+    }
+
+    public function innerJoin(string $table, string $on): self {
+        $this->queryString .= " INNER JOIN $table ON $on";
+        return $this;
+    }
+
+    public function leftJoin(string $table, string $on): self {
+        $this->queryString .= " LEFT JOIN $table ON $on";
+        return $this;
+    }
+
+    public function groupBy(string $field): self {
+        $this->queryString .= " GROUP BY $field";
+        return $this;
+    }
+
+    public function raw(string $sql, array $params = []): self {
+        $this->queryString = $sql;
+        $this->params = $params;
+        return $this;
+    }
+
+    public function debug(): string {
+        $sql = $this->queryString;
+        foreach ($this->params as $key => $value) {
+            $value = is_string($value) ? "'$value'" : $value;
+            $sql = str_replace(":$key", (string)$value, $sql);
+        }
+        return "SQL: $sql\nParams: " . json_encode($this->params, JSON_PRETTY_PRINT);
     }
 
     public function getQueryString(): string {

@@ -16,29 +16,23 @@ class User extends AbstractEntity {
     #[Column(type: 'int')]
     private int $id;
 
-    #[Column(type: 'string', size: 255)]
-    private string $name;
-
-    #[Column(type: 'string', size: 255)]
+    #[Column(type: 'VARCHAR', size: 255, unique: true)]
     private string $email;
 
-    #[Column(type: 'string', size: 255)]
-    private string $password;
+    #[Column(type: 'VARCHAR', size: 255, name: 'password_hash')]
+    private string $passwordHash;
 
-    #[Column(type: 'string', name: 'created_at')]
+    #[Column(type: 'VARCHAR', size: 20, enum: ['admin', 'editor', 'author', 'reader'])]
+    private string $role;
+
+    #[Column(type: 'TIMESTAMP', name: 'created_at')]
     private string $createdAt;
+
+    #[Column(type: 'TIMESTAMP', name: 'updated_at', nullable: true)]
+    private ?string $updatedAt = null;
 
     public function getId(): int {
         return $this->id;
-    }
-
-    public function getName(): string {
-        return $this->name;
-    }
-
-    public function setName(string $name): self {
-        $this->name = $name;
-        return $this;
     }
 
     public function getEmail(): string {
@@ -50,16 +44,39 @@ class User extends AbstractEntity {
         return $this;
     }
 
-    public function getPassword(): string {
-        return $this->password;
+    public function getPasswordHash(): string {
+        return $this->passwordHash;
     }
 
-    public function setPassword(string $password): self {
-        $this->password = $password;
+    public function setPasswordHash(string $passwordHash): self {
+        $this->passwordHash = $passwordHash;
+        return $this;
+    }
+
+    public function getRole(): string {
+        return $this->role;
+    }
+
+    public function setRole(string $role): self {
+        $this->role = $role;
         return $this;
     }
 
     public function getCreatedAt(): string {
         return $this->createdAt;
+    }
+
+    public function setCreatedAt(string $createdAt): self {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?string {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?string $updatedAt): self {
+        $this->updatedAt = $updatedAt;
+        return $this;
     }
 }

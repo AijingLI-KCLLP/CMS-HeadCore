@@ -68,6 +68,13 @@ docker-compose down -v
 ```
 
 ## Diagrammes
+| Rôle | Responsabilité typique |                                                                                                                              
+|------|----------------------|                                                                                                                              
+| `admin` | Gestion complète (users, config, tout) |                                                                                                           
+| `editor` | Publie/archive le contenu des autres |                                                                                                            
+| `author` | Crée et gère son propre contenu |                                                                                                                 
+| `reader` | Lecture seule (rôle par défaut à l'inscription) |
+
 UML
 ```mermaid
 classDiagram

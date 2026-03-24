@@ -14,7 +14,6 @@ class UserService extends AbstractService
         parent::__construct(new UserRepository());
     }
 
-    /** @return User[] */
     public function listUsers(): array
     {
         return $this->repository->findAll();
@@ -27,21 +26,45 @@ class UserService extends AbstractService
 
     public function getUserByEmail(string $email): ?User
     {
-        /** @var UserRepository $repository */
         return $this->repository->findByEmail($email);
     }
 
-    public function createUser(string $name, string $email, string $password): string
+    public function signUp(string $email, string $password): void
     {
+        if (!$this->valideMail($email)) {
+            throw new \RuntimeException('Invalid email format.', 422);
+        }
+        if (!$this->validePassword($password)) {
+            throw new \RuntimeException('Password must be at least 8 characters.', 422);
+        }
         if ($this->getUserByEmail($email) !== null) {
-            throw new \RuntimeException('Email already in use.', 409);
+            throw new \RuntimeException('Email already in use.', 422);
         }
 
-        $user = (new User())
-            ->setName($name)
-            ->setEmail($email)
-            ->setPassword(PasswordHasher::hash($password));
+        $this->createUser($email, $password);
+    }
 
-        return $this->repository->save($user);
+    public function createUser(string $email, string $password): void
+    {
+        $now = date('Y-m-d H:i:s');
+
+        $user = (new User())
+            ->setEmail($email)
+            ->setPasswordHash(PasswordHasher::hash($password))
+            ->setRole('reader')
+            ->setCreatedAt($now)
+            ->setUpdatedAt($now);
+
+        $this->repository->save($user);
+    }
+
+    private function valideMail(string $email): bool
+    {
+        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+    }
+
+    private function validePassword(string $password): bool
+    {
+        return strlen($password) >= 8;
     }
 }

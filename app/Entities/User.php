@@ -79,4 +79,9 @@ class User extends AbstractEntity {
         $this->updatedAt = $updatedAt;
         return $this;
     }
+
+    public function setName(string $name)
+    {
+        $this->name = $name;
+    }
 }

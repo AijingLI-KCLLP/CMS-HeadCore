@@ -20,14 +20,15 @@ class AuthController extends AbstractController
 
     public function process(Request $request): Response
     {
-        return match ($request->getMethod()) {
-            'POST' => $this->handlePost($request),
-            'DELETE' => $this->handleDelete(),
+        return match (true) {
+            $request->getMethod() === 'POST' && $request->getPath() === '/signup' => $this->handleSignUp($request),
+            $request->getMethod() === 'POST' => $this->handleLogin($request),
+            $request->getMethod() === 'DELETE' => $this->handleDelete(),
             default => Response::error('Method not allowed', 405),
         };
     }
 
-    private function handlePost(Request $request): Response
+    private function handleLogin(Request $request): Response
     {
         $body = $request->getJsonBody();
 
@@ -37,13 +38,30 @@ class AuthController extends AbstractController
 
         $user = $this->userService->getUserByEmail($body['email']);
 
-        if ($user === null || !PasswordHasher::verify($body['password'], $user->getPassword())) {
+        if ($user === null || !PasswordHasher::verify($body['password'], $user->getPasswordHash())) {
             return Response::error('Invalid credentials', 401);
         }
 
         Auth::login($user);
 
         return Response::json(['message' => 'Logged in', 'user_id' => Auth::id()]);
+    }
+
+    private function handleSignUp(Request $request): Response
+    {
+        $body = $request->getJsonBody();
+
+        if (empty($body['email']) || empty($body['password'])) {
+            return Response::error('Missing email or password', 422);
+        }
+
+        try {
+            $this->userService->signUp($body['email'], $body['password']);
+        } catch (\RuntimeException $e) {
+            return Response::error($e->getMessage(), $e->getCode());
+        }
+
+        return Response::json(['message' => 'Account created'], 201);
     }
 
     private function handleDelete(): Response

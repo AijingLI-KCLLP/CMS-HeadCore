@@ -69,6 +69,40 @@ class UserService extends AbstractService
         $this->repository->save($user);
     }
 
+    public function changeRole(int $userId, string $newRole, int $currentAdminId): void
+    {
+        $validRoles = ['admin', 'editor', 'author', 'reader'];
+
+        if (!in_array($newRole, $validRoles, true)) {
+            throw new \RuntimeException('Invalid role.', 422);
+        }
+        if ($userId === $currentAdminId) {
+            throw new \RuntimeException('Cannot change your own role.', 403);
+        }
+
+        $user = $this->getUserById($userId);
+        if ($user === null) {
+            throw new \RuntimeException('User not found.', 404);
+        }
+
+        $user->setRole($newRole)->setUpdatedAt(date('Y-m-d H:i:s'));
+        $this->repository->update($user);
+    }
+
+    public function deleteUser(int $userId, int $currentAdminId): void
+    {
+        if ($userId === $currentAdminId) {
+            throw new \RuntimeException('Cannot delete your own account.', 403);
+        }
+
+        $user = $this->getUserById($userId);
+        if ($user === null) {
+            throw new \RuntimeException('User not found.', 404);
+        }
+
+        $this->repository->remove($user);
+    }
+
     private function valideMail(string $email): bool
     {
         return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;

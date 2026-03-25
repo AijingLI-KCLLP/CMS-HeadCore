@@ -25,8 +25,7 @@ class Auth
 
     public static function logout(): void
     {
-        Session::remove(self::SESSION_KEY);
-        Session::remove(self::SESSION_ROLE);
+        Session::destroy();
     }
 
     public static function check(): bool

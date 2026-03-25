@@ -22,7 +22,7 @@ class AuthController extends AbstractController
         return match (true) {
             $request->getMethod() === 'POST' && $request->getPath() === '/signup' => $this->handleSignUp($request),
             $request->getMethod() === 'POST' && $request->getPath() === '/login'  => $this->handleLogin($request),
-            $request->getMethod() === 'DELETE' => $this->handleDelete(),
+            $request->getMethod() === 'POST' && $request->getPath() === '/logout' => $this->handleLogout(),
             default => Response::error('Method not allowed', 405),
         };
     }
@@ -63,9 +63,9 @@ class AuthController extends AbstractController
         return Response::json(['message' => 'Account created'], 201);
     }
 
-    private function handleDelete(): Response
+    private function handleLogout(): Response
     {
         Auth::logout();
-        return Response::json(['message' => 'Logged out']);
+        return Response::redirect('/login');
     }
 }

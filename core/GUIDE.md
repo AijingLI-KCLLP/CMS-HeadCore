@@ -388,6 +388,7 @@ return $this->render('articles/list', ['articles' => $articles]);
 Codes HTTP courants 🌐 :
 - `200` — OK
 - `201` — Créé
+- `302` - Redirection temporaire
 - `400` — Mauvaise requête
 - `401` — Non authentifié
 - `403` — Interdit

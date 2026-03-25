@@ -6,5 +6,6 @@
     { "path": "/users/{id}", "method": "GET",  "controller": "UserController" },
     { "path": "/auth",       "method": "POST",   "controller": "AuthController" },
     { "path": "/auth",       "method": "DELETE", "controller": "AuthController" },
-    { "path": "/signup",   "method": "POST",   "controller": "AuthController" }
+    { "path": "/signup",   "method": "POST",   "controller": "AuthController" },
+    { "path": "/login",    "method": "POST",   "controller": "AuthController" }
 ]

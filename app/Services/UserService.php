@@ -29,6 +29,17 @@ class UserService extends AbstractService
         return $this->repository->findByEmail($email);
     }
 
+    public function login(string $email, string $password): User
+    {
+        $user = $this->getUserByEmail($email);
+
+        if ($user === null || !PasswordHasher::verify($password, $user->getPasswordHash())) {
+            throw new \RuntimeException('Invalid credentials', 401);
+        }
+
+        return $user;
+    }
+
     public function signUp(string $email, string $password): void
     {
         if (!$this->valideMail($email)) {

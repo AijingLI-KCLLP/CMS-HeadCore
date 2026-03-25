@@ -3,15 +3,12 @@
 namespace App\Controllers;
 
 use App\Services\UserService;
+use Core\Auth\Acl;
+use Core\Auth\Auth;
 use Core\Controllers\AbstractController;
 use Core\Http\Request;
 use Core\Http\Response;
 
-/**
- * Thin controller: orchestration only.
- * - No SQL, no PDO, no business logic here.
- * - Delegates everything to UserService.
- */
 class UserController extends AbstractController
 {
     private UserService $userService;
@@ -23,40 +20,94 @@ class UserController extends AbstractController
 
     public function process(Request $request): Response
     {
-        return match ($request->getMethod()) {
-            'GET'  => $this->handleGet($request),
-            'POST' => $this->handlePost($request),
+        $method = $request->getMethod();
+        $path   = $request->getPath();
+        $id     = $request->getSlug('id');
+
+        return match (true) {
+            $method === 'GET'    && $path === '/admin/users'  => $this->handleAdminList(),
+            $method === 'POST'   && $id !== null              => $this->handleChangeRole($request),
+            $method === 'DELETE' && $id !== null              => $this->handleDelete($request),
+            $method === 'GET'    && $id !== null              => $this->handleGetOne($request),
+            $method === 'GET'                                 => $this->handleList(),
             default => Response::error('Method not allowed', 405),
         };
     }
 
-    private function handleGet(Request $request): Response
+    private function handleAdminList(): Response
     {
-        $id = $request->getSlug('id');
-
-        if ($id !== null) {
-            $user = $this->userService->getUserById((int) $id);
-            if ($user === null) {
-                return Response::error('User not found', 404);
-            }
-            return Response::json($user->toArray());
+        if (!Acl::can(Auth::role(), 'user.manage')) {
+            return Response::error('Forbidden', 403);
         }
 
-        $users = array_map(fn($u) => $u->toArray(), $this->userService->listUsers());
+        $users = array_map(fn($u) => $this->safeArray($u), $this->userService->listUsers());
         return Response::json($users);
     }
 
-    private function handlePost(Request $request): Response
+    private function handleChangeRole(Request $request): Response
     {
-        $body = $request->getJsonBody();
-
-        foreach (['name', 'email', 'password'] as $field) {
-            if (empty($body[$field])) {
-                return Response::error("Missing field: $field", 422);
-            }
+        if (!Acl::can(Auth::role(), 'user.manage')) {
+            return Response::error('Forbidden', 403);
         }
 
-        $id = $this->userService->createUser($body['name'], $body['email'], $body['password']);
-        return Response::json(['id' => $id], 201);
+        $body = $request->getJsonBody();
+        if (empty($body['role'])) {
+            return Response::error('Missing role', 422);
+        }
+
+        try {
+            $this->userService->changeRole(
+                (int) $request->getSlug('id'),
+                $body['role'],
+                (int) Auth::id()
+            );
+        } catch (\RuntimeException $e) {
+            return Response::error($e->getMessage(), (int) $e->getCode() ?: 500);
+        }
+
+        return Response::json(['message' => 'Role updated']);
+    }
+
+    private function handleDelete(Request $request): Response
+    {
+        if (!Acl::can(Auth::role(), 'user.manage')) {
+            return Response::error('Forbidden', 403);
+        }
+
+        try {
+            $this->userService->deleteUser(
+                (int) $request->getSlug('id'),
+                (int) Auth::id()
+            );
+        } catch (\RuntimeException $e) {
+            return Response::error($e->getMessage(), (int) $e->getCode() ?: 500);
+        }
+
+        return Response::json(['message' => 'User deleted']);
+    }
+
+    private function handleGetOne(Request $request): Response
+    {
+        $user = $this->userService->getUserById((int) $request->getSlug('id'));
+        if ($user === null) {
+            return Response::error('User not found', 404);
+        }
+        return Response::json($this->safeArray($user));
+    }
+
+    private function handleList(): Response
+    {
+        $users = array_map(fn($u) => $this->safeArray($u), $this->userService->listUsers());
+        return Response::json($users);
+    }
+
+    private function safeArray(\App\Entities\User $user): array
+    {
+        return [
+            'id'         => $user->getId(),
+            'email'      => $user->getEmail(),
+            'role'       => $user->getRole(),
+            'created_at' => $user->getCreatedAt(),
+        ];
     }
 }

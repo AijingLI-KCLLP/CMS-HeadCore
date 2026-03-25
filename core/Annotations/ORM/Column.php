@@ -12,7 +12,9 @@ class Column extends AbstractAnnotation{
         public string $type,
         public bool $nullable = false,
         public int|null $size = null,
-        public string|null $name = null
+        public string|null $name = null,
+        public bool $unique = false,
+        public array $enum = []
     ){}
 }
 

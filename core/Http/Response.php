@@ -21,6 +21,10 @@ class Response {
         return self::json(['error' => $message], $status);
     }
 
+    public static function redirect(string $url, int $status = 302): self {
+        return new self('', $status, ['Location' => $url]);
+    }
+
     public function send(): void {
         http_response_code($this->status);
         foreach ($this->headers as $name => $value) {

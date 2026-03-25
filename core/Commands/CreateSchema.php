@@ -8,6 +8,7 @@ use Core\Annotations\ORM\AutoIncrement;
 use Core\Annotations\ORM\Column;
 use Core\Annotations\ORM\Id;
 use Core\Annotations\ORM\ManyToOne;
+use Core\Annotations\ORM\ORM;
 use Core\Database\DatabaseConnexion;
 use Core\Database\Dsn;
 use Core\Entities\AbstractEntity;
@@ -59,7 +60,11 @@ class CreateSchema extends AbstractCommand {
         foreach($sortedClassesAnnotationsDump as $classAnnotionsDump) {
             $properties = $classAnnotionsDump->getPropertiesWithAnnotation(Column::class);
 
-            $statement .= self::getSqlCreateTableScript($classAnnotionsDump->getName(), $properties);
+            $tableName = $classAnnotionsDump->hasAnnotation(ORM::class)
+                ? $classAnnotionsDump->getAnnotation(ORM::class)->table
+                : (new \ReflectionClass($classAnnotionsDump->getName()))->getShortName();
+
+            $statement .= self::getSqlCreateTableScript($tableName, $properties);
             $statement .= PHP_EOL;
         }
 
@@ -87,7 +92,7 @@ class CreateSchema extends AbstractCommand {
     private static function getEntitiesClasses(): array {
         $entitiesClasses = [];
 
-        $files = scandir(__DIR__ . '/../../Entities');
+        $files = scandir(__DIR__ . '/../../app/Entities');
 
         foreach($files as $file) {
             if($file === '.' || $file === '..') {
@@ -111,14 +116,14 @@ class CreateSchema extends AbstractCommand {
         return $entitiesClasses;
     }
 
-    private static function getSqlCreateTableScript(string $className, array $properties): string {
+    private static function getSqlCreateTableScript(string $tableName, array $properties): string {
         $propertiesStatement = '';
-        
+
         foreach($properties as $propertyAnnotationsDump) {
             $propertiesStatement .= self::getSqlPropertyScript($propertyAnnotationsDump);
         }
 
-        return sprintf(self::CREATE_TABLE_FORMAT, (new \ReflectionClass($className))->getShortName(), rtrim($propertiesStatement, ','));
+        return sprintf(self::CREATE_TABLE_FORMAT, $tableName, rtrim($propertiesStatement, ','));
     }
     
     private static function getSqlPropertyScript(PropertyAnnotationsDump $propertyAnnotationsDump): string {
@@ -131,20 +136,32 @@ class CreateSchema extends AbstractCommand {
 
         $statement .= $propertyName . ' ';
 
-        $statement .= $propertyAnnotationsDump->getAnnotation(Column::class)->type . '';
+        $columnAnnotation = $propertyAnnotationsDump->getAnnotation(Column::class);
 
-        if($propertyAnnotationsDump->getAnnotation(Column::class)->size !== null) {
-            $statement .= '(' . $propertyAnnotationsDump->getAnnotation(Column::class)->size . ')';
+        if($propertyAnnotationsDump->hasAnnotation(AutoIncrement::class) === true) {
+            $statement .= 'SERIAL PRIMARY KEY,';
+            return $statement;
         }
-        
-        if($propertyAnnotationsDump->getAnnotation(Column::class)->nullable === false) {
+
+        $statement .= $columnAnnotation->type;
+
+        if($columnAnnotation->size !== null) {
+            $statement .= '(' . $columnAnnotation->size . ')';
+        }
+
+        if($columnAnnotation->nullable === false) {
             $statement .= ' NOT NULL';
         }
-        
-        if($propertyAnnotationsDump->hasAnnotation(AutoIncrement::class) === true) {
-            $statement .= ' AUTO_INCREMENT';
+
+        if(!empty($columnAnnotation->enum)) {
+            $quoted = implode(', ', array_map(fn($v) => "'$v'", $columnAnnotation->enum));
+            $statement .= ' CHECK (' . $propertyName . ' IN (' . $quoted . '))';
         }
-        
+
+        if($columnAnnotation->unique === true) {
+            $statement .= ' UNIQUE';
+        }
+
         if($propertyAnnotationsDump->hasAnnotation(Id::class) === true) {
             $statement .= ' PRIMARY KEY';
         }

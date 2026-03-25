@@ -8,44 +8,36 @@ use Core\Http\Session;
 class Auth
 {
     private const SESSION_KEY = 'auth_user_id';
+    private const SESSION_ROLE = 'auth_user_role';
 
-    /**
-     * Store the authenticated user's ID in session.
-     */
-    public static function login(AbstractEntity $user): void
+    public static function login(AbstractEntity $user, string $role): void
     {
+        Session::start();
+        session_regenerate_id(true);
         Session::set(self::SESSION_KEY, $user->getId());
+        Session::set(self::SESSION_ROLE, $role);
     }
 
-    /**
-     * Clear the authenticated user from session.
-     */
+    public static function role(): ?string
+    {
+        return Session::get(self::SESSION_ROLE);
+    }
+
     public static function logout(): void
     {
-        Session::remove(self::SESSION_KEY);
+        Session::destroy();
     }
 
-    /**
-     * Check if a user is currently authenticated.
-     */
     public static function check(): bool
     {
         return Session::has(self::SESSION_KEY);
     }
 
-    /**
-     * Get the current authenticated user's ID.
-     * Returns null if not authenticated.
-     */
     public static function id(): int|string|null
     {
         return Session::get(self::SESSION_KEY);
     }
 
-    /**
-     * Protect a route: throws 401 if not authenticated.
-     * Call at the top of any controller method that requires auth.
-     */
     public static function guard(): void
     {
         if (!self::check()) {

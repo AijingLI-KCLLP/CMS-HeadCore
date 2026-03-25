@@ -116,8 +116,9 @@ abstract class AbstractRepository
             ->set($entity)
             ->where('id', QueryConditions::EQ)
             ->setParams($entity->getValues())
+            ->addParam('id', $entity->getId())
         ;
-    
+
         $this->executeQuery();
     }
 

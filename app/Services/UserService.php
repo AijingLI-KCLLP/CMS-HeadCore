@@ -14,7 +14,6 @@ class UserService extends AbstractService
         parent::__construct(new UserRepository());
     }
 
-    /** @return User[] */
     public function listUsers(): array
     {
         return $this->repository->findAll();
@@ -27,21 +26,90 @@ class UserService extends AbstractService
 
     public function getUserByEmail(string $email): ?User
     {
-        /** @var UserRepository $repository */
         return $this->repository->findByEmail($email);
     }
 
-    public function createUser(string $name, string $email, string $password): string
+    public function login(string $email, string $password): User
     {
-        if ($this->getUserByEmail($email) !== null) {
-            throw new \RuntimeException('Email already in use.', 409);
+        $user = $this->getUserByEmail($email);
+
+        if ($user === null || !PasswordHasher::verify($password, $user->getPasswordHash())) {
+            throw new \RuntimeException('Invalid credentials', 401);
         }
 
-        $user = (new User())
-            ->setName($name)
-            ->setEmail($email)
-            ->setPassword(PasswordHasher::hash($password));
+        return $user;
+    }
 
-        return $this->repository->save($user);
+    public function signUp(string $email, string $password): void
+    {
+        if (!$this->valideMail($email)) {
+            throw new \RuntimeException('Invalid email format.', 422);
+        }
+        if (!$this->validePassword($password)) {
+            throw new \RuntimeException('Password must be at least 8 characters.', 422);
+        }
+        if ($this->getUserByEmail($email) !== null) {
+            throw new \RuntimeException('Email already in use.', 422);
+        }
+
+        $this->createUser($email, $password);
+    }
+
+    public function createUser(string $email, string $password): void
+    {
+        $now = date('Y-m-d H:i:s');
+
+        $user = (new User())
+            ->setEmail($email)
+            ->setPasswordHash(PasswordHasher::hash($password))
+            ->setRole('reader')
+            ->setCreatedAt($now)
+            ->setUpdatedAt($now);
+
+        $this->repository->save($user);
+    }
+
+    public function changeRole(int $userId, string $newRole, int $currentAdminId): void
+    {
+        $validRoles = ['admin', 'editor', 'author', 'reader'];
+
+        if (!in_array($newRole, $validRoles, true)) {
+            throw new \RuntimeException('Invalid role.', 422);
+        }
+        if ($userId === $currentAdminId) {
+            throw new \RuntimeException('Cannot change your own role.', 403);
+        }
+
+        $user = $this->getUserById($userId);
+        if ($user === null) {
+            throw new \RuntimeException('User not found.', 404);
+        }
+
+        $user->setRole($newRole)->setUpdatedAt(date('Y-m-d H:i:s'));
+        $this->repository->update($user);
+    }
+
+    public function deleteUser(int $userId, int $currentAdminId): void
+    {
+        if ($userId === $currentAdminId) {
+            throw new \RuntimeException('Cannot delete your own account.', 403);
+        }
+
+        $user = $this->getUserById($userId);
+        if ($user === null) {
+            throw new \RuntimeException('User not found.', 404);
+        }
+
+        $this->repository->remove($user);
+    }
+
+    private function valideMail(string $email): bool
+    {
+        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+    }
+
+    private function validePassword(string $password): bool
+    {
+        return strlen($password) >= 8;
     }
 }

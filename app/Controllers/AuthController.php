@@ -55,7 +55,7 @@ class AuthController extends AbstractController
         }
 
         try {
-            $this->userService->signUp($body['email'], $body['password']);
+            $this->userService->signUp($body['email'], $body['password'], $body['name'] ?? null);
         } catch (\RuntimeException $e) {
             return Response::error($e->getMessage(), $e->getCode());
         }

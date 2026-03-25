@@ -85,14 +85,10 @@ class User {
   +name
   +email
   +passwordHash
+  +role
   +status
   +createdAt
   +updatedAt
-}
-
-class Role {
-  +id
-  +name
 }
 
 class Content {
@@ -146,7 +142,6 @@ class AuditLog {
 
 %% RELATIONS
 
-User "1" --> "1" Role : has
 User "1" --> "0..*" Content : creates
 
 Content "0..*" --> "0..*" Category : categorized as

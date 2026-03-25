@@ -105,8 +105,10 @@ class UserController extends AbstractController
     {
         return [
             'id'         => $user->getId(),
+            'name'       => $user->getName(),
             'email'      => $user->getEmail(),
             'role'       => $user->getRole(),
+            'status'     => $user->getStatus(),
             'created_at' => $user->getCreatedAt(),
         ];
     }

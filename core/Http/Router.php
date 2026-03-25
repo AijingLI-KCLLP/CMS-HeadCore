@@ -2,6 +2,7 @@
 
 namespace Core\Http;
 
+use Core\Auth\Auth;
 use Core\Config\Config;
 use Core\Controllers\AbstractController;
 
@@ -16,6 +17,10 @@ class Router {
         foreach($routes as $route) {
             if(self::checkMethod($request, $route) === false || self::checkUri($request, $route) === false) {
                 continue;
+            }
+
+            if (!empty($route['auth']) && !Auth::check()) {
+                return Response::error('Unauthorized', 401);
             }
 
             $controller = self::getControllerInstance($route['controller']);

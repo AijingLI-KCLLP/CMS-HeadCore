@@ -144,12 +144,18 @@ class AuditLog {
   +createdAt
 }
 
-User "0..*" --> "1" Role : has
+%% RELATIONS
+
+User "1" --> "1" Role : has
 User "1" --> "0..*" Content : creates
-Content "0..*" --> "0..1" Category : belongs to
-Content "0..*" --> "0..*" Tag : has
+
+Content "0..*" --> "0..*" Category : categorized as
+Content "0..*" --> "0..*" Tag : tagged with
 Content "0..*" --> "0..*" Media : uses
+
 Content "1" --> "0..*" Version : has
+Version "0..*" --> "1" User : created by
+
 User "1" --> "0..*" AuditLog : performs
 ```
 Diagramme de flux
@@ -211,3 +217,18 @@ flowchart TD
     AB -- Admin --> AC[Suppression définitive]
     AB -- Auteur / Éditeur --> AD[Archivage du contenu]
 ```
+
+# Rôles et permissions
+| Permission        | Admin | Editor | Author | Reader |
+|------------------|:-----:|:------:|:------:|:------:|
+| content.read     |  ✅   |   ✅   |   ✅   |   ✅   |
+| content.create   |  ✅   |   ✅   |   ✅   |   ❌   |
+| content.edit.own |  ✅   |   ✅   |   ✅   |   ❌   |
+| content.edit.any |  ✅   |   ✅   |   ❌   |   ❌   |
+| content.publish  |  ✅   |   ✅   |   ❌   |   ❌   |
+| content.archive  |  ✅   |   ✅   |   ❌   |   ❌   |
+| content.delete   |  ✅   |   ❌   |   ❌   |   ❌   |
+| media.upload     |  ✅   |   ✅   |   ✅   |   ❌   |
+| media.delete     |  ✅   |   ✅   |   ❌   |   ❌   |
+| user.manage      |  ✅   |   ❌   |   ❌   |   ❌   |
+| settings.manage  |  ✅   |   ❌   |   ❌   |   ❌   |

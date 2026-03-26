@@ -26,4 +26,9 @@ class ContentRepository extends AbstractRepository
     {
         return $this->findBy(['author_id' => $authorId]);
     }
+
+    public function findByCategory(int $categoryId): array
+    {
+        return $this->findBy(['category_id' => $categoryId]);
+    }
 }

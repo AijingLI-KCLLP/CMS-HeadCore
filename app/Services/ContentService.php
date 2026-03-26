@@ -3,14 +3,19 @@
 namespace App\Services;
 
 use App\Entities\Content;
+use App\Entities\ContentTag;
 use App\Repositories\ContentRepository;
+use App\Repositories\ContentTagRepository;
 use Core\Services\AbstractService;
 
 class ContentService extends AbstractService
 {
+    private ContentTagRepository $contentTagRepository;
+
     public function __construct()
     {
         parent::__construct(new ContentRepository());
+        $this->contentTagRepository = new ContentTagRepository();
     }
 
     public function listAll(): array
@@ -94,6 +99,47 @@ class ContentService extends AbstractService
     public function delete(Content $content): void
     {
         $this->repository->remove($content);
+    }
+
+    public function setCategory(Content $content, ?int $categoryId, int $updatedBy): void
+    {
+        $content->setCategoryId($categoryId)
+                ->setUpdatedBy($updatedBy)
+                ->setUpdatedAt(date('Y-m-d H:i:s'));
+
+        $this->repository->update($content);
+    }
+
+    public function attachTag(int $contentId, int $tagId): void
+    {
+        $existing = $this->contentTagRepository->findByContent($contentId);
+        foreach ($existing as $ct) {
+            if ($ct->getTagId() === $tagId) {
+                return;
+            }
+        }
+
+        $ct = (new ContentTag())->setContentId($contentId)->setTagId($tagId);
+        $this->contentTagRepository->save($ct);
+    }
+
+    public function detachTag(int $contentId, int $tagId): void
+    {
+        $existing = $this->contentTagRepository->findByContent($contentId);
+        foreach ($existing as $ct) {
+            if ($ct->getTagId() === $tagId) {
+                $this->contentTagRepository->remove($ct);
+                return;
+            }
+        }
+    }
+
+    public function getTagIds(int $contentId): array
+    {
+        return array_map(
+            fn($ct) => $ct->getTagId(),
+            $this->contentTagRepository->findByContent($contentId)
+        );
     }
 
     private function generateSlug(string $title, string $createdAt): string

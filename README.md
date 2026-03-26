@@ -81,81 +81,74 @@ classDiagram
 direction LR
 
 class User {
-  +id
-  +name
-  +email
-  +passwordHash
-  +role
-  +status
-  +createdAt
-  +updatedAt
+  +int id
+  +string? name
+  +string email
+  +string passwordHash
+  +string role
+  +string status
+  +string createdAt
+  +string? updatedAt
 }
 
 class Content {
-  +id
-  +title
-  +slug
-  +body
-  +authorId
-  +status
-  +createdAt
-  +updatedAt
-  +updatedBy
-  +publishedAt
-  +categoryId
-  +tagIds
+  +int id
+  +string title
+  +string slug
+  +string body
+  +int authorId
+  +string status
+  +int? categoryId
+  +int? updatedBy
+  +string? publishedAt
+  +string createdAt
+  +string? updatedAt
 }
 
 class Category {
-  +id
-  +name
-  +slug
+  +int id
+  +string name
+  +string slug
 }
 
 class Tag {
-  +id
-  +name
-  +slug
+  +int id
+  +string name
+  +string slug
+}
+
+class ContentTag {
+  +int contentId
+  +int tagId
 }
 
 class Media {
-  +id
-  +fileName
-  +filePath
-  +altText
-  +mimeType
-  +createdAt
-  +updatedAt
-}
-
-class Version {
-  +id
-  +versionNumber
-  +title
-  +body
-  +createdAt
+  +int id
+  +string fileName
+  +string filePath
+  +string altText
+  +string mimeType
+  +string createdAt
 }
 
 class AuditLog {
-  +id
-  +action
-  +entityType
-  +entityId
-  +createdAt
+  +int id
+  +string action
+  +string entityType
+  +int entityId
+  +int userId
+  +string createdAt
 }
 
 %% RELATIONS
 
-User "1" --> "0..*" Content : creates
-
-Content "0..*" --> "0..*" Category : categorized as
-Content "0..*" --> "0..*" Tag : tagged with
-Content "0..*" --> "0..*" Media : uses
-
-Content "1" --> "0..*" Version : has
-Version "0..*" --> "1" User : created by
-
+User "1" --> "0..*" Content : authors
 User "1" --> "0..*" AuditLog : performs
+
+Content "0..*" --> "0..1" Category : categorized as
+Content "0..*" --> "0..*" ContentTag : tagged via
+Tag "1" --> "0..*" ContentTag : referenced by
+Content "0..*" --> "0..*" Media : uses
 ```
 Diagramme de flux
 ```mermaid

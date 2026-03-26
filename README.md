@@ -96,10 +96,14 @@ class Content {
   +title
   +slug
   +body
+  +authorId
   +status
   +createdAt
   +updatedAt
+  +updatedBy
   +publishedAt
+  +categoryId
+  +tagIds
 }
 
 class Category {
@@ -227,3 +231,7 @@ flowchart TD
 | media.delete     |  ✅   |   ✅   |   ❌   |   ❌   |
 | user.manage      |  ✅   |   ❌   |   ❌   |   ❌   |
 | settings.manage  |  ✅   |   ❌   |   ❌   |   ❌   |
+
+
+Workflow de statut :
+draft → review → published → archived

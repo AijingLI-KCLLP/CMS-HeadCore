@@ -1,0 +1,16 @@
+meta {
+  name: list contents
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/contents
+  body: none
+  auth: none
+}
+
+settings {
+  encodeUrl: true
+  followRedirects: false
+}

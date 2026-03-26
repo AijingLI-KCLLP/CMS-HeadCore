@@ -6,6 +6,12 @@
     { "path": "/admin/users",             "method": "GET",    "controller": "UserController", "auth": true },
     { "path": "/admin/users/{id}/role",   "method": "POST",   "controller": "UserController", "auth": true },
     { "path": "/admin/users/{id}",        "method": "DELETE", "controller": "UserController", "auth": true },
+    { "path": "/contents",                    "method": "GET",    "controller": "ContentController", "auth": true },
+    { "path": "/contents/{id}",               "method": "GET",    "controller": "ContentController", "auth": true },
+    { "path": "/contents",                    "method": "POST",   "controller": "ContentController", "auth": true },
+    { "path": "/contents/{id}",               "method": "PUT",    "controller": "ContentController", "auth": true },
+    { "path": "/contents/{id}/status",        "method": "POST",   "controller": "ContentController", "auth": true },
+    { "path": "/contents/{id}",               "method": "DELETE", "controller": "ContentController", "auth": true },
     { "path": "/signup",                  "method": "POST",   "controller": "AuthController" },
     { "path": "/login",                   "method": "POST",   "controller": "AuthController" },
     { "path": "/logout",                  "method": "POST",   "controller": "AuthController", "auth": true }

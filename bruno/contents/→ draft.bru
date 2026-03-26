@@ -1,0 +1,22 @@
+meta {
+  name: → draft
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/contents/{{contentId}}/status
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "status": "draft"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

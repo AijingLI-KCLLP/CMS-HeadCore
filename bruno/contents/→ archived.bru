@@ -1,0 +1,23 @@
+meta {
+  name: → archived
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/contents/{{contentId}}/status
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "status": "archived"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  followRedirects: false
+}

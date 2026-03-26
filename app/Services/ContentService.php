@@ -60,8 +60,8 @@ class ContentService extends AbstractService
             ->setCreatedAt($now)
             ->setUpdatedAt($now);
 
-        $this->repository->save($content);
-        return $content;
+        $insertedId = $this->repository->save($content);
+        return $this->repository->find((int) $insertedId) ?? $content;
     }
 
     public function update(Content $content, array $fields, int $updatedBy): void

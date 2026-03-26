@@ -1,0 +1,23 @@
+meta {
+  name: → published
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/contents/{{contentId}}/status
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "status": "published"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  followRedirects: false
+}

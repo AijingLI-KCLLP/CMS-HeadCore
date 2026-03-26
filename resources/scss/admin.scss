@@ -1,92 +1,77 @@
-// ═══════════════════════════════════════════════════════════════════════════
-//  HeadCore CMS — Design System Back-office
-//  resources/scss/admin.scss
-//
-//  Typographie : DM Mono (mono) + Instrument Serif (display titres)
-//  Palette    : fond charbon, accents ambre, surfaces ardoise
-//  Philosophie : industriel-éditorial, lisible, dense mais aéré
-// ═══════════════════════════════════════════════════════════════════════════
-
-// ───────────────────────────────────────────────────────────────────────────
-// 1. TOKENS — variables CSS (custom properties)
-// ───────────────────────────────────────────────────────────────────────────
-
 :root {
   // Couleurs — fond
-  --bg-canvas:      #0f1012;   // fond global, quasi-noir
-  --bg-surface:     #17191d;   // cartes, sidebar
-  --bg-elevated:    #1e2126;   // éléments au-dessus de surface
-  --bg-overlay:     #252830;   // hover, dropdowns
+  --bg-canvas: #0f1012; // fond global, quasi-noir
+  --bg-surface: #17191d; // cartes, sidebar
+  --bg-elevated: #1e2126; // éléments au-dessus de surface
+  --bg-overlay: #252830; // hover, dropdowns
 
   // Couleurs — bordures
-  --border-subtle:  #2a2d34;
+  --border-subtle: #2a2d34;
   --border-default: #363a44;
-  --border-strong:  #4a4f5c;
+  --border-strong: #4a4f5c;
 
   // Couleurs — texte
-  --text-primary:   #e8e9ec;
+  --text-primary: #e8e9ec;
   --text-secondary: #9197a3;
-  --text-muted:     #5c6270;
-  --text-inverse:   #0f1012;
+  --text-muted: #5c6270;
+  --text-inverse: #0f1012;
 
   // Couleurs — accent ambre (actions, lien actif)
-  --accent-500:     #f59e0b;
-  --accent-400:     #fbbf24;
-  --accent-600:     #d97706;
-  --accent-100:     #fef3c7;
-  --accent-900:     #451a03;
+  --accent-500: #f59e0b;
+  --accent-400: #fbbf24;
+  --accent-600: #d97706;
+  --accent-100: #fef3c7;
+  --accent-900: #451a03;
 
   // Couleurs — badges rôles
-  --role-admin:     #e11d48;    // rose-rouge
-  --role-editor:    #7c3aed;    // violet
-  --role-author:    #0891b2;    // cyan
-  --role-reader:    #4b5563;    // gris
+  --role-admin: #e11d48; // rose-rouge
+  --role-editor: #7c3aed; // violet
+  --role-author: #0891b2; // cyan
+  --role-reader: #4b5563; // gris
 
   // Typographie
-  --font-mono:      'DM Mono', 'Fira Code', monospace;
-  --font-display:   'Instrument Serif', Georgia, serif;
-  --font-body:      var(--font-mono);  // tout le back-office en mono = look technique
+  --font-mono: "DM Mono", "Fira Code", monospace;
+  --font-display: "Instrument Serif", Georgia, serif;
+  --font-body: var(--font-mono); // tout le back-office en mono = look technique
 
   // Tailles de police
-  --text-xs:   0.6875rem;   // 11px
-  --text-sm:   0.8125rem;   // 13px
-  --text-base: 0.9375rem;   // 15px
-  --text-lg:   1.0625rem;   // 17px
-  --text-xl:   1.25rem;
-  --text-2xl:  1.5rem;
-  --text-3xl:  2rem;
+  --text-xs: 0.6875rem; // 11px
+  --text-sm: 0.8125rem; // 13px
+  --text-base: 0.9375rem; // 15px
+  --text-lg: 1.0625rem; // 17px
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
 
   // Espacements
-  --space-1:  0.25rem;
-  --space-2:  0.5rem;
-  --space-3:  0.75rem;
-  --space-4:  1rem;
-  --space-5:  1.25rem;
-  --space-6:  1.5rem;
-  --space-8:  2rem;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
   --space-10: 2.5rem;
   --space-12: 3rem;
 
   // Layout
-  --header-height:   3.5rem;   // 56px
-  --sidebar-width:   14rem;    // 224px
-  --content-max:     72rem;
+  --header-height: 3.5rem; // 56px
+  --sidebar-width: 14rem; // 224px
+  --content-max: 72rem;
 
   // Radius
-  --radius-sm:  3px;
-  --radius-md:  6px;
-  --radius-lg:  10px;
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
 
   // Transitions
-  --ease-fast:    150ms ease;
+  --ease-fast: 150ms ease;
   --ease-default: 220ms ease;
 }
 
-// ───────────────────────────────────────────────────────────────────────────
-// 2. RESET MINIMAL
-// ───────────────────────────────────────────────────────────────────────────
-
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -98,10 +83,6 @@ html {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
-
-// ───────────────────────────────────────────────────────────────────────────
-// 3. BASE — body admin
-// ───────────────────────────────────────────────────────────────────────────
 
 .admin-body {
   background-color: var(--bg-canvas);
@@ -118,10 +99,6 @@ html {
     "footer";
 }
 
-// ───────────────────────────────────────────────────────────────────────────
-// 4. HEADER — barre de navigation principale
-// ───────────────────────────────────────────────────────────────────────────
-
 .admin-header {
   grid-area: header;
   position: sticky;
@@ -132,10 +109,15 @@ html {
 
   // Ligne ambre très fine en haut = signature visuelle
   &::before {
-    content: '';
+    content: "";
     display: block;
     height: 2px;
-    background: linear-gradient(90deg, var(--accent-600), var(--accent-400), transparent);
+    background: linear-gradient(
+      90deg,
+      var(--accent-600),
+      var(--accent-400),
+      transparent
+    );
   }
 }
 
@@ -143,12 +125,11 @@ html {
   display: flex;
   align-items: center;
   gap: var(--space-6);
-  height: calc(var(--header-height) - 2px); // retire la barre signature
+  height: calc(var(--header-height) - 2px);
   padding: 0 var(--space-6);
   max-width: 100%;
 }
 
-// Logo
 .admin-header__logo {
   display: flex;
   align-items: center;
@@ -201,7 +182,8 @@ html {
   gap: var(--space-1);
 }
 
-.nav__item {}
+.nav__item {
+}
 
 .nav__link {
   display: inline-flex;
@@ -214,7 +196,9 @@ html {
   font-size: var(--text-sm);
   font-weight: 400;
   letter-spacing: 0.02em;
-  transition: color var(--ease-fast), background-color var(--ease-fast);
+  transition:
+    color var(--ease-fast),
+    background-color var(--ease-fast);
   white-space: nowrap;
 
   .nav__icon {
@@ -228,14 +212,18 @@ html {
     color: var(--text-primary);
     background-color: var(--bg-elevated);
 
-    .nav__icon { opacity: 1; }
+    .nav__icon {
+      opacity: 1;
+    }
   }
 
   &--active {
     color: var(--accent-400);
     background-color: color-mix(in srgb, var(--accent-500) 10%, transparent);
 
-    .nav__icon { opacity: 1; }
+    .nav__icon {
+      opacity: 1;
+    }
 
     &:hover {
       background-color: color-mix(in srgb, var(--accent-500) 15%, transparent);
@@ -243,7 +231,6 @@ html {
   }
 }
 
-// Zone utilisateur (droite du header)
 .admin-header__user {
   display: flex;
   align-items: center;
@@ -289,7 +276,6 @@ html {
   white-space: nowrap;
 }
 
-// Bouton déconnexion
 .logout-form {
   display: contents;
 }
@@ -306,7 +292,10 @@ html {
   font-family: var(--font-body);
   font-size: var(--text-xs);
   cursor: pointer;
-  transition: color var(--ease-fast), border-color var(--ease-fast), background-color var(--ease-fast);
+  transition:
+    color var(--ease-fast),
+    border-color var(--ease-fast),
+    background-color var(--ease-fast);
   white-space: nowrap;
   letter-spacing: 0.03em;
 
@@ -322,16 +311,12 @@ html {
   }
 }
 
-// ───────────────────────────────────────────────────────────────────────────
-// 5. SHELL — conteneur sidebar + main
-// ───────────────────────────────────────────────────────────────────────────
-
 .admin-shell {
   grid-area: shell;
   display: grid;
   grid-template-columns: var(--sidebar-width) 1fr;
   grid-template-areas: "sidebar main";
-  min-height: 0; // évite overflow sur Firefox
+  min-height: 0;
 
   // Quand il n'y a pas de sidebar (section vide), le main prend toute la largeur
   &:not(:has(.admin-sidebar)) {
@@ -340,10 +325,6 @@ html {
   }
 }
 
-// ───────────────────────────────────────────────────────────────────────────
-// 6. SIDEBAR — navigation secondaire contextuelle
-// ───────────────────────────────────────────────────────────────────────────
-
 .admin-sidebar {
   grid-area: sidebar;
   background-color: var(--bg-surface);
@@ -351,7 +332,6 @@ html {
   padding: var(--space-6) 0;
   overflow-y: auto;
 
-  // Scrollbar discrète
   scrollbar-width: thin;
   scrollbar-color: var(--border-default) transparent;
 }
@@ -380,7 +360,9 @@ html {
   text-decoration: none;
   color: var(--text-secondary);
   font-size: var(--text-sm);
-  transition: color var(--ease-fast), background-color var(--ease-fast);
+  transition:
+    color var(--ease-fast),
+    background-color var(--ease-fast);
 
   &:hover {
     color: var(--text-primary);
@@ -399,17 +381,13 @@ html {
   }
 }
 
-// ───────────────────────────────────────────────────────────────────────────
-// 7. MAIN — zone de contenu principal
-// ───────────────────────────────────────────────────────────────────────────
-
 .admin-main {
   grid-area: main;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   min-height: 0;
-  outline: none; // tabindex="-1" pour skip-link
+  outline: none;
 
   &:focus-visible {
     outline: none;
@@ -435,10 +413,6 @@ html {
   padding: var(--space-8);
 }
 
-// ───────────────────────────────────────────────────────────────────────────
-// 8. FOOTER
-// ───────────────────────────────────────────────────────────────────────────
-
 .admin-footer {
   grid-area: footer;
   border-top: 1px solid var(--border-subtle);
@@ -459,10 +433,6 @@ html {
     font-weight: 500;
   }
 }
-
-// ───────────────────────────────────────────────────────────────────────────
-// 9. BADGES — rôles utilisateurs
-// ───────────────────────────────────────────────────────────────────────────
 
 .badge {
   display: inline-flex;
@@ -500,10 +470,6 @@ html {
   }
 }
 
-// ───────────────────────────────────────────────────────────────────────────
-// 10. ACCESSIBILITÉ — skip link
-// ───────────────────────────────────────────────────────────────────────────
-
 .skip-link {
   position: absolute;
   top: -100%;
@@ -522,11 +488,7 @@ html {
   }
 }
 
-// ───────────────────────────────────────────────────────────────────────────
-// 11. UTILITAIRES — composants réutilisables dans les pages filles
-// ───────────────────────────────────────────────────────────────────────────
-
-// Carte / panneau générique
+// Carte
 .card {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);
@@ -592,7 +554,9 @@ html {
     background-color: var(--accent-500);
     color: var(--text-inverse);
 
-    &:hover { background-color: var(--accent-400); }
+    &:hover {
+      background-color: var(--accent-400);
+    }
   }
 
   &--ghost {
@@ -623,7 +587,7 @@ html {
   }
 }
 
-// Messages flash / alertes
+// Alertes
 .alert {
   padding: var(--space-4);
   border-radius: var(--radius-md);
@@ -678,7 +642,9 @@ html {
   transition: border-color var(--ease-fast);
   width: 100%;
 
-  &::placeholder { color: var(--text-muted); }
+  &::placeholder {
+    color: var(--text-muted);
+  }
 
   &:focus {
     outline: none;
@@ -692,9 +658,7 @@ html {
   min-height: 8rem;
 }
 
-// ───────────────────────────────────────────────────────────────────────────
-// 12. RESPONSIVE — adaptation mobile
-// ───────────────────────────────────────────────────────────────────────────
+// Adaptation mobile
 
 @media (max-width: 1024px) {
   :root {
@@ -721,10 +685,14 @@ html {
       gap: var(--space-1);
     }
 
-    .sidebar__group-label { display: none; }
+    .sidebar__group-label {
+      display: none;
+    }
   }
 
-  .user-profile__info { display: none; }
+  .user-profile__info {
+    display: none;
+  }
 
   .admin-main__header,
   .admin-main__body {
@@ -737,17 +705,19 @@ html {
   }
 
   .logo__name,
-  .logo__env { display: none; }
+  .logo__env {
+    display: none;
+  }
 }
 
 @media (max-width: 480px) {
-  .nav__link span:not(.nav__icon) { display: none; }
-  .btn-logout span { display: none; }
+  .nav__link span:not(.nav__icon) {
+    display: none;
+  }
+  .btn-logout span {
+    display: none;
+  }
 }
-
-// ───────────────────────────────────────────────────────────────────────────
-// 13. DASHBOARD — styles spécifiques à la page /admin
-// ───────────────────────────────────────────────────────────────────────────
 
 // Message de bienvenue
 .dashboard-welcome {
@@ -810,14 +780,12 @@ html {
   margin-bottom: var(--space-4);
 }
 
-// Grille de stats
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
   gap: var(--space-4);
 }
 
-// Carte stat
 .stat-card {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);
@@ -829,9 +797,8 @@ html {
   position: relative;
   overflow: hidden;
 
-  // Filet coloré sur le bord gauche
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0 auto 0 0;
     width: 3px;
@@ -842,7 +809,9 @@ html {
 
   &--link {
     text-decoration: none;
-    transition: border-color var(--ease-fast), background-color var(--ease-fast);
+    transition:
+      border-color var(--ease-fast),
+      background-color var(--ease-fast);
     cursor: pointer;
 
     .stat-card__arrow {
@@ -853,7 +822,9 @@ html {
       color: var(--text-muted);
       opacity: 0;
       transform: translateX(-4px);
-      transition: opacity var(--ease-fast), transform var(--ease-fast);
+      transition:
+        opacity var(--ease-fast),
+        transform var(--ease-fast);
     }
 
     &:hover {
@@ -872,13 +843,15 @@ html {
     }
   }
 
-  // Variantes couleur du filet
-  &--total::before            { background: var(--border-strong); }
+  &--total::before {
+    background: var(--border-strong);
+  }
 
   &--link:hover::before,
-  &__icon--draft   ~ &::before { background: var(--text-muted); }
+  &__icon--draft ~ &::before {
+    background: var(--text-muted);
+  }
 
-  // Icône de la stat
   &__icon {
     display: inline-flex;
     align-items: center;
@@ -888,15 +861,32 @@ html {
     border-radius: var(--radius-md);
     flex-shrink: 0;
 
-    &--draft     { background: color-mix(in srgb, var(--text-muted) 12%, transparent); color: var(--text-muted); }
-    &--published { background: color-mix(in srgb, #22c55e 12%, transparent); color: #4ade80; }
-    &--archived  { background: color-mix(in srgb, var(--accent-500) 12%, transparent); color: var(--accent-400); }
-    &--total     { background: color-mix(in srgb, var(--text-secondary) 12%, transparent); color: var(--text-secondary); }
-    &--users     { background: color-mix(in srgb, #7c3aed 12%, transparent); color: #a78bfa; }
-    &--media     { background: color-mix(in srgb, #0891b2 12%, transparent); color: #22d3ee; }
+    &--draft {
+      background: color-mix(in srgb, var(--text-muted) 12%, transparent);
+      color: var(--text-muted);
+    }
+    &--published {
+      background: color-mix(in srgb, #22c55e 12%, transparent);
+      color: #4ade80;
+    }
+    &--archived {
+      background: color-mix(in srgb, var(--accent-500) 12%, transparent);
+      color: var(--accent-400);
+    }
+    &--total {
+      background: color-mix(in srgb, var(--text-secondary) 12%, transparent);
+      color: var(--text-secondary);
+    }
+    &--users {
+      background: color-mix(in srgb, #7c3aed 12%, transparent);
+      color: #a78bfa;
+    }
+    &--media {
+      background: color-mix(in srgb, #0891b2 12%, transparent);
+      color: #22d3ee;
+    }
   }
 
-  // Chiffre + libellé
   &__body {
     display: flex;
     flex-direction: column;
@@ -920,11 +910,18 @@ html {
   }
 }
 
-// Filets colorés auto selon icône
-.stat-card:has(.stat-card__icon--published)::before { background: #22c55e; }
-.stat-card:has(.stat-card__icon--archived)::before  { background: var(--accent-500); }
-.stat-card:has(.stat-card__icon--users)::before     { background: #7c3aed; }
-.stat-card:has(.stat-card__icon--media)::before     { background: #0891b2; }
+.stat-card:has(.stat-card__icon--published)::before {
+  background: #22c55e;
+}
+.stat-card:has(.stat-card__icon--archived)::before {
+  background: var(--accent-500);
+}
+.stat-card:has(.stat-card__icon--users)::before {
+  background: #7c3aed;
+}
+.stat-card:has(.stat-card__icon--media)::before {
+  background: #0891b2;
+}
 
 // Répartition des rôles
 .role-breakdown {
@@ -966,7 +963,10 @@ html {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   text-decoration: none;
-  transition: border-color var(--ease-fast), background-color var(--ease-fast), transform var(--ease-fast);
+  transition:
+    border-color var(--ease-fast),
+    background-color var(--ease-fast),
+    transform var(--ease-fast);
 
   &:hover {
     border-color: var(--accent-600);
@@ -993,7 +993,9 @@ html {
     border-radius: var(--radius-md);
     background-color: var(--bg-elevated);
     color: var(--text-secondary);
-    transition: background-color var(--ease-fast), color var(--ease-fast);
+    transition:
+      background-color var(--ease-fast),
+      color var(--ease-fast);
     flex-shrink: 0;
   }
 
@@ -1018,7 +1020,9 @@ html {
     gap: var(--space-2);
   }
 
-  .welcome__date { margin-top: 0; }
+  .welcome__date {
+    margin-top: 0;
+  }
 
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);

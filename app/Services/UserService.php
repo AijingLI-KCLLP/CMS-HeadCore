@@ -40,7 +40,7 @@ class UserService extends AbstractService
         return $user;
     }
 
-    public function signUp(string $email, string $password, ?string $name = null): void
+    public function signUp(string $email, string $password, ?string $name = null): User
     {
         if (!$this->valideMail($email)) {
             throw new \RuntimeException('Invalid email format.', 422);
@@ -52,10 +52,10 @@ class UserService extends AbstractService
             throw new \RuntimeException('Email already in use.', 422);
         }
 
-        $this->createUser($email, $password, $name);
+        return $this->createUser($email, $password, $name);
     }
 
-    public function createUser(string $email, string $password, ?string $name = null): void
+    public function createUser(string $email, string $password, ?string $name = null): User
     {
         $now = date('Y-m-d H:i:s');
 
@@ -68,7 +68,8 @@ class UserService extends AbstractService
             ->setCreatedAt($now)
             ->setUpdatedAt($now);
 
-        $this->repository->save($user);
+        $insertedId = $this->repository->save($user);
+        return $this->repository->find((int) $insertedId) ?? $user;
     }
 
     public function changeRole(int $userId, string $newRole, int $currentAdminId): void

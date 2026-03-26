@@ -3,14 +3,21 @@
 namespace App\Services;
 
 use App\Entities\Tag;
+use App\Repositories\ContentRepository;
+use App\Repositories\ContentTagRepository;
 use App\Repositories\TagRepository;
 use Core\Services\AbstractService;
 
 class TagService extends AbstractService
 {
+    private ContentTagRepository $contentTagRepository;
+    private ContentRepository    $contentRepository;
+
     public function __construct()
     {
         parent::__construct(new TagRepository());
+        $this->contentTagRepository = new ContentTagRepository();
+        $this->contentRepository    = new ContentRepository();
     }
 
     public function listAll(): array
@@ -36,12 +43,23 @@ class TagService extends AbstractService
             ->setName($name)
             ->setSlug($slug);
 
-        $this->repository->save($tag);
-        return $tag;
+        $insertedId = $this->repository->save($tag);
+        return $this->repository->find((int) $insertedId) ?? $tag;
     }
 
     public function delete(Tag $tag): void
     {
+        $contentTags = $this->contentTagRepository->findByTag($tag->getId());
+
+        foreach ($contentTags as $ct) {
+            $content = $this->contentRepository->find($ct->getContentId());
+            if ($content !== null && $content->getStatus() === 'published') {
+                throw new \RuntimeException(
+                    "Cannot delete tag '{$tag->getName()}': it is used by published contents.", 409
+                );
+            }
+        }
+
         $this->repository->remove($tag);
     }
 

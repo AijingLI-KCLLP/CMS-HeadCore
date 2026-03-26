@@ -1,16 +1,15 @@
 meta {
-  name: logout
+  name: list categories
   type: http
-  seq: 3
+  seq: 1
 }
 
-post {
-  url: {{baseUrl}}/logout
+get {
+  url: {{baseUrl}}/categories
   body: none
   auth: inherit
 }
 
 settings {
-  encodeUrl: true
   followRedirects: false
 }

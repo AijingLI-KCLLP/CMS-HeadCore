@@ -1,0 +1,19 @@
+meta {
+  name: delete tag
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{baseUrl}}/tags/{{tagId}}
+  body: none
+  auth: inherit
+}
+
+settings {
+  followRedirects: false
+}
+
+docs {
+  Retourne 409 si le tag est utilisé par des contenus publiés.
+}

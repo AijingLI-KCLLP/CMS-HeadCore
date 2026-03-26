@@ -1,16 +1,15 @@
 meta {
-  name: logout
+  name: list tags
   type: http
-  seq: 3
+  seq: 1
 }
 
-post {
-  url: {{baseUrl}}/logout
+get {
+  url: {{baseUrl}}/tags
   body: none
   auth: inherit
 }
 
 settings {
-  encodeUrl: true
   followRedirects: false
 }

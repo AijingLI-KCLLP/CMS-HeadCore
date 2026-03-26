@@ -40,8 +40,8 @@ class CategoryService extends AbstractService
             ->setName($name)
             ->setSlug($slug);
 
-        $this->repository->save($category);
-        return $category;
+        $insertedId = $this->repository->save($category);
+        return $this->repository->find((int) $insertedId) ?? $category;
     }
 
     public function update(Category $category, string $name): void
@@ -54,7 +54,17 @@ class CategoryService extends AbstractService
 
     public function delete(Category $category): void
     {
-        foreach ($this->contentRepository->findByCategory($category->getId()) as $content) {
+        $contents = $this->contentRepository->findByCategory($category->getId());
+
+        foreach ($contents as $content) {
+            if ($content->getStatus() === 'published') {
+                throw new \RuntimeException(
+                    "Cannot delete category '{$category->getName()}': it has published contents.", 409
+                );
+            }
+        }
+
+        foreach ($contents as $content) {
             $content->setCategoryId(null);
             $this->contentRepository->update($content);
         }

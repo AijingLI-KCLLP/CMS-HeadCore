@@ -228,3 +228,23 @@ flowchart TD
 
 Workflow de statut :
 draft → review → published → archived
+draft
+contenu en cours d’écriture
+non visible publiquement
+modifiable librement par l’auteur
+review
+contenu soumis pour validation
+non visible publiquement
+en attente d’un éditeur/admin
+published
+visible publiquement
+version officielle
+archived
+contenu retiré
+non visible
+conservé pour historique
+
+| Action        | Qui               | Résultat                                      |
+|---------------|-------------------|-----------------------------------------------|
+| softDelete()  | Editor, Author    | deleted_at = now(), invisible mais récupérable |
+| hardDelete()  | Admin seulement   | Supprimé définitivement de la DB              |

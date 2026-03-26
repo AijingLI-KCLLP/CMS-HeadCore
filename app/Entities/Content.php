@@ -46,6 +46,9 @@ class Content extends AbstractEntity {
     #[Column(type: 'TIMESTAMP', name: 'updated_at', nullable: true)]
     private ?string $updatedAt = null;
 
+    #[Column(type: 'TIMESTAMP', name: 'deleted_at', nullable: true)]
+    private ?string $deletedAt = null;
+
     public function getId(): int { return $this->id; }
 
     public function getTitle(): string { return $this->title; }
@@ -77,4 +80,7 @@ class Content extends AbstractEntity {
 
     public function getUpdatedAt(): ?string { return $this->updatedAt; }
     public function setUpdatedAt(?string $updatedAt): self { $this->updatedAt = $updatedAt; return $this; }
+
+    public function getDeletedAt(): ?string { return $this->deletedAt; }
+    public function setDeletedAt(?string $deletedAt): self { $this->deletedAt = $deletedAt; return $this; }
 }

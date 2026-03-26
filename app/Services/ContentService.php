@@ -40,6 +40,13 @@ class ContentService extends AbstractService
 
     public function create(string $title, string $body, int $authorId, ?int $categoryId = null): Content
     {
+        if (empty(trim($title))) {
+            throw new \RuntimeException('Title is required.', 422);
+        }
+        if (empty(trim($body))) {
+            throw new \RuntimeException('Body is required.', 422);
+        }
+
         $now  = date('Y-m-d H:i:s');
         $slug = $this->generateSlug($title, $now);
 
@@ -59,13 +66,14 @@ class ContentService extends AbstractService
 
     public function update(Content $content, array $fields, int $updatedBy): void
     {
-        if (isset($fields['title'])) {
+        if (isset($fields['title']) && $fields['title'] !== $content->getTitle()) {
             $content->setTitle($fields['title']);
+            $content->setSlug($this->generateSlug($fields['title'], $content->getCreatedAt()));
         }
         if (isset($fields['body'])) {
             $content->setBody($fields['body']);
         }
-        if (isset($fields['category_id'])) {
+        if (array_key_exists('category_id', $fields)) {
             $content->setCategoryId($fields['category_id']);
         }
 
@@ -96,7 +104,12 @@ class ContentService extends AbstractService
         $this->repository->update($content);
     }
 
-    public function delete(Content $content): void
+    public function softDelete(Content $content): void
+    {
+        $this->repository->softDelete($content);
+    }
+
+    public function hardDelete(Content $content): void
     {
         $this->repository->remove($content);
     }

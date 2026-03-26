@@ -1,0 +1,20 @@
+meta {
+  name: ping
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/ping
+  body: none
+  auth: inherit
+}
+
+settings {
+  followRedirects: false
+}
+
+docs {
+  Doit retourner { "status": "ok" } avec code 200.
+  Les headers CORS (Access-Control-Allow-Origin: *) doivent être présents.
+}

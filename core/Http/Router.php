@@ -13,6 +13,7 @@ class Router {
 
     public static function route(Request $request): Response {
         $routes = Config::get('routes');
+        $isApi  = str_starts_with($request->getPath(), '/api');
 
         foreach($routes as $route) {
             if(self::checkMethod($request, $route) === false || self::checkUri($request, $route) === false) {
@@ -24,10 +25,29 @@ class Router {
             }
 
             $controller = self::getControllerInstance($route['controller']);
-            return $controller->process($request);
+            $response   = $controller->process($request);
+
+            if ($isApi) {
+                self::addCorsHeaders($response);
+            }
+
+            return $response;
+        }
+
+        if ($isApi) {
+            $response = \Core\Http\ApiResponse::error('Route not found', 404);
+            self::addCorsHeaders($response);
+            return $response;
         }
 
         throw new \Exception('Route not found', 404);
+    }
+
+    private static function addCorsHeaders(Response $response): void
+    {
+        $response->addHeader('Access-Control-Allow-Origin', '*');
+        $response->addHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+        $response->addHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
     }
 
 

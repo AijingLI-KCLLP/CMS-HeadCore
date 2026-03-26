@@ -28,12 +28,14 @@ class ContentController extends AbstractController
         $id     = $request->getSlug('id');
 
         return match (true) {
-            $method === 'GET'    && $id === null              => $this->handleList(),
-            $method === 'GET'    && $id !== null              => $this->handleGetOne((int) $id),
-            $method === 'POST'   && $id === null              => $this->handleCreate($request),
-            $method === 'PUT'    && $id !== null              => $this->handleUpdate($request, (int) $id),
-            $method === 'POST'   && str_ends_with($path, '/status') => $this->handleTransition($request, (int) $id),
-            $method === 'DELETE' && $id !== null              => $this->handleDelete($request, (int) $id),
+            $method === 'GET'    && $id === null                      => $this->handleList(),
+            $method === 'GET'    && $id !== null                      => $this->handleGetOne((int) $id),
+            $method === 'POST'   && $id === null                      => $this->handleCreate($request),
+            $method === 'PUT'    && $id !== null                      => $this->handleUpdate($request, (int) $id),
+            $method === 'POST'   && str_ends_with($path, '/status')   => $this->handleTransition($request, (int) $id),
+            $method === 'POST'   && str_ends_with($path, '/tags')     => $this->handleAttachTag($request, (int) $id),
+            $method === 'DELETE' && $request->getSlug('tagId') !== null => $this->handleDetachTag((int) $id, (int) $request->getSlug('tagId')),
+            $method === 'DELETE' && $id !== null                      => $this->handleDelete($request, (int) $id),
             default => Response::error('Method not allowed', 405),
         };
     }
@@ -154,6 +156,43 @@ class ContentController extends AbstractController
         }
 
         return Response::error('Forbidden', 403);
+    }
+
+    private function handleAttachTag(Request $request, int $contentId): Response
+    {
+        $content = $this->contentService->getById($contentId);
+        if ($content === null) {
+            return Response::error('Content not found', 404);
+        }
+
+        $isOwn = $content->getAuthorId() === (int) Auth::id();
+        if (!$isOwn && !Acl::can(Auth::role(), 'content.edit.any')) {
+            return Response::error('Forbidden', 403);
+        }
+
+        $body = $request->getJsonBody();
+        if (empty($body['tag_id'])) {
+            return Response::error('Missing tag_id', 422);
+        }
+
+        $this->contentService->attachTag($contentId, (int) $body['tag_id']);
+        return Response::json(['message' => 'Tag attached']);
+    }
+
+    private function handleDetachTag(int $contentId, int $tagId): Response
+    {
+        $content = $this->contentService->getById($contentId);
+        if ($content === null) {
+            return Response::error('Content not found', 404);
+        }
+
+        $isOwn = $content->getAuthorId() === (int) Auth::id();
+        if (!$isOwn && !Acl::can(Auth::role(), 'content.edit.any')) {
+            return Response::error('Forbidden', 403);
+        }
+
+        $this->contentService->detachTag($contentId, $tagId);
+        return Response::json(['message' => 'Tag detached']);
     }
 
     private function toArray(\App\Entities\Content $content): array

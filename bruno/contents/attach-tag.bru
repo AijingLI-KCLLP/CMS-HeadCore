@@ -1,23 +1,21 @@
 meta {
-  name: create tag
+  name: attach tag to content
   type: http
-  seq: 2
+  seq: 7
 }
 
 post {
-  url: {{baseUrl}}/tags
+  url: {{baseUrl}}/contents/{{contentId}}/tags
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    "name": "javascript"
+    "tag_id": {{tagId}}
   }
 }
 
 settings {
-  encodeUrl: false
-  timeout: 0
   followRedirects: false
 }

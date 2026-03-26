@@ -1,4 +1,7 @@
 [
+    { "path": "/api/ping",                "method": "GET",    "controller": "ApiPingController" },
+    { "path": "/api/contents",            "method": "GET",    "controller": "ApiContentController" },
+    { "path": "/api/contents/{id}",       "method": "GET",    "controller": "ApiContentController" },
     { "path": "/test",                    "method": "GET",    "controller": "TestController" },
     { "path": "/users",                   "method": "GET",    "controller": "UserController", "auth": true },
     { "path": "/users/{id}",              "method": "GET",    "controller": "UserController", "auth": true },
@@ -10,6 +13,8 @@
     { "path": "/contents",                    "method": "POST",   "controller": "ContentController", "auth": true },
     { "path": "/contents/{id}",               "method": "PUT",    "controller": "ContentController", "auth": true },
     { "path": "/contents/{id}/status",        "method": "POST",   "controller": "ContentController", "auth": true },
+    { "path": "/contents/{id}/tags",          "method": "POST",   "controller": "ContentController", "auth": true },
+    { "path": "/contents/{id}/tags/{tagId}",  "method": "DELETE", "controller": "ContentController", "auth": true },
     { "path": "/contents/{id}",               "method": "DELETE", "controller": "ContentController", "auth": true },
     { "path": "/categories",              "method": "GET",    "controller": "CategoryController", "auth": true },
     { "path": "/categories/{id}",         "method": "GET",    "controller": "CategoryController", "auth": true },

@@ -1,0 +1,20 @@
+meta {
+  name: route inexistante (404 JSON)
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/inexistant
+  body: none
+  auth: inherit
+}
+
+settings {
+  followRedirects: false
+}
+
+docs {
+  Doit retourner { "error": true, "message": "Route not found", "code": 404 }
+  et non le HTML Apache.
+}

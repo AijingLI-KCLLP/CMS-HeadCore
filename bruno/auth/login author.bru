@@ -1,19 +1,18 @@
 meta {
-  name: sign up
+  name: login author
   type: http
-  seq: 2
+  seq: 4
 }
 
 post {
-  url: {{baseUrl}}/signup
+  url: {{baseUrl}}/login
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    "name": null,
-    "email": "random2@author.com",
+    "email": "random1@author.com",
     "password": "password"
   }
 }
@@ -21,4 +20,6 @@ body:json {
 settings {
   encodeUrl: true
   timeout: 0
+  followRedirects: true
+  maxRedirects: 0
 }

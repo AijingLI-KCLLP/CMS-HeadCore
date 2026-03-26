@@ -1,0 +1,15 @@
+meta {
+  name: list categories
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/categories
+  body: none
+  auth: inherit
+}
+
+settings {
+  followRedirects: false
+}

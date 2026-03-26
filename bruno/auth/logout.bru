@@ -1,0 +1,16 @@
+meta {
+  name: logout
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/logout
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  followRedirects: false
+}

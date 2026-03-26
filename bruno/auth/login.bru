@@ -1,0 +1,25 @@
+meta {
+  name: login
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/login
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "meow@admin.com",
+    "password": "paté1!paté2!"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 0
+}

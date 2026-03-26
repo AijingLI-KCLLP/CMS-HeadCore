@@ -38,7 +38,7 @@ class AuthController extends AbstractController
         try {
             $user = $this->userService->login($body['email'], $body['password']);
         } catch (\RuntimeException $e) {
-            return Response::error($e->getMessage(), $e->getCode());
+            return Response::error($e->getMessage(), (int) $e->getCode() ?: 500);
         }
 
         Auth::login($user, $user->getRole());
@@ -55,12 +55,12 @@ class AuthController extends AbstractController
         }
 
         try {
-            $this->userService->signUp($body['email'], $body['password']);
+            $user = $this->userService->signUp($body['email'], $body['password'], $body['name'] ?? null);
         } catch (\RuntimeException $e) {
-            return Response::error($e->getMessage(), $e->getCode());
+            return Response::error($e->getMessage(), (int) $e->getCode() ?: 500);
         }
 
-        return Response::json(['message' => 'Account created'], 201);
+        return Response::json(['message' => 'Account created', 'id' => $user->getId(), 'email' => $user->getEmail()], 201);
     }
 
     private function handleLogout(): Response

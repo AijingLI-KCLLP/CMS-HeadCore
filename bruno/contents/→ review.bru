@@ -1,0 +1,23 @@
+meta {
+  name: → review
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/contents/{{contentId}}/status
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "status": "review"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  followRedirects: false
+}

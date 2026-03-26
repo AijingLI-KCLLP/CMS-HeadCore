@@ -40,7 +40,7 @@ class UserService extends AbstractService
         return $user;
     }
 
-    public function signUp(string $email, string $password): void
+    public function signUp(string $email, string $password, ?string $name = null): User
     {
         if (!$this->valideMail($email)) {
             throw new \RuntimeException('Invalid email format.', 422);
@@ -52,21 +52,24 @@ class UserService extends AbstractService
             throw new \RuntimeException('Email already in use.', 422);
         }
 
-        $this->createUser($email, $password);
+        return $this->createUser($email, $password, $name);
     }
 
-    public function createUser(string $email, string $password): void
+    public function createUser(string $email, string $password, ?string $name = null): User
     {
         $now = date('Y-m-d H:i:s');
 
         $user = (new User())
+            ->setName($name)
             ->setEmail($email)
             ->setPasswordHash(PasswordHasher::hash($password))
             ->setRole('reader')
+            ->setStatus('active')
             ->setCreatedAt($now)
             ->setUpdatedAt($now);
 
-        $this->repository->save($user);
+        $insertedId = $this->repository->save($user);
+        return $this->repository->find((int) $insertedId) ?? $user;
     }
 
     public function changeRole(int $userId, string $newRole, int $currentAdminId): void
@@ -100,7 +103,11 @@ class UserService extends AbstractService
             throw new \RuntimeException('User not found.', 404);
         }
 
-        $this->repository->remove($user);
+        $user->setStatus('deleted')
+             ->setEmail('deleted_' . $userId . '@deleted.invalid')
+             ->setUpdatedAt(date('Y-m-d H:i:s'));
+
+        $this->repository->update($user);
     }
 
     private function valideMail(string $email): bool

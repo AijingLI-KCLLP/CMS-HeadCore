@@ -6,6 +6,7 @@ use App\Entities\Content;
 use App\Entities\ContentTag;
 use App\Repositories\ContentRepository;
 use App\Repositories\ContentTagRepository;
+use Core\Repositories\AbstractRepository;
 use Core\Services\AbstractService;
 
 class ContentService extends AbstractService
@@ -23,20 +24,25 @@ class ContentService extends AbstractService
         return $this->repository->findAll();
     }
 
-    public function listPublished(): array
+    /*public function listByStatus(string $status): array
+    {
+        return $this->repository->findByStatus($status);
+    }*/
+
+    /*public function listPublished(): array
     {
         return $this->repository->findByStatus('published');
-    }
+    }*/
 
     public function getById(int $id): ?Content
     {
         return $this->repository->find($id);
     }
 
-    public function getBySlug(string $slug): ?Content
+    /*public function getBySlug(string $slug): ?Content
     {
         return $this->repository->findBySlug($slug);
-    }
+    }*/
 
     public function create(string $title, string $body, int $authorId, ?int $categoryId = null): Content
     {
@@ -106,7 +112,7 @@ class ContentService extends AbstractService
 
     public function softDelete(Content $content): void
     {
-        $this->repository->softDelete($content);
+        $this->repository->remove($content);
     }
 
     public function hardDelete(Content $content): void

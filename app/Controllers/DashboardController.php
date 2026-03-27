@@ -37,9 +37,9 @@ class DashboardController extends AbstractController
         ]);
 
         // Rendu du layout principal avec les données de session
-        return $this->render('layout/admin', [
+        return $this->renderLayout('layouts/backoffice', [
             'pageTitle'      => 'Tableau de bord',
-            'currentSection' => 'dashboard',
+            'currentSection' => '',
             'userEmail'      => $userEmail,
             'userRole'       => $role,
             'content'        => $content,
@@ -65,7 +65,17 @@ class DashboardController extends AbstractController
     {
         extract($data);
         ob_start();
-        require __DIR__ . "/../../../views/{$template}.php";
+        require __DIR__ . "/../../resources/views/{$template}.php";
         return ob_get_clean();
+    }
+
+    private function renderLayout(string $template, array $data = []): Response
+    {
+        extract($data);
+        ob_start();
+        require __DIR__ . "/../../resources/views/{$template}.php";
+        $html = ob_get_clean();
+
+        return new Response($html, 200, ['Content-Type' => 'text/html']);
     }
 }

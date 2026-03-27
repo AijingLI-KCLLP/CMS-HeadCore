@@ -2,10 +2,11 @@ version: '1.0'
 
 services:
   headcore-frontend:
-    image: node:20-alpine
+    image: node:22-alpine
     volumes:
-      - ./resources:/app/resources
+      - .:/app
     working_dir: /app
+    command: sh -c "npm install -g sass && sass --watch resources/scss/main.scss:public/assets/css/main.css resources/scss/admin.scss:public/assets/css/admin.css"
     networks:
       - headcore-net
 

@@ -20,6 +20,7 @@ class AuthController extends AbstractController
     public function process(Request $request): Response
     {
         return match (true) {
+            $request->getMethod() === 'GET'  && $request->getPath() === '/login'  => $this->showLogin(),
             $request->getMethod() === 'POST' && $request->getPath() === '/signup' => $this->handleSignUp($request),
             $request->getMethod() === 'POST' && $request->getPath() === '/login'  => $this->handleLogin($request),
             $request->getMethod() === 'POST' && $request->getPath() === '/logout' => $this->handleLogout(),
@@ -27,18 +28,37 @@ class AuthController extends AbstractController
         };
     }
 
+    private function showLogin(string $error = '', string $prefillEmail = ''): Response
+    {
+        ob_start();
+        $error       = $error;
+        $prefillEmail = $prefillEmail;
+        require __DIR__ . '/../../resources/views/auth/login.php';
+        $html = ob_get_clean();
+
+        return new Response($html, 200, ['Content-Type' => 'text/html']);
+    }
+
     private function handleLogin(Request $request): Response
     {
-        $body = $request->getJsonBody();
+        $body = $request->expectsJson()
+            ? $request->getJsonBody()
+            : $request->getFormBody();
 
         if (empty($body['email']) || empty($body['password'])) {
-            return Response::error('Missing email or password', 422);
+            if ($request->expectsJson()) {
+                return Response::error('Missing email or password', 422);
+            }
+            return $this->showLogin('Email et mot de passe requis.', $body['email'] ?? '');
         }
 
         try {
             $user = $this->userService->login($body['email'], $body['password']);
         } catch (\RuntimeException $e) {
-            return Response::error($e->getMessage(), (int) $e->getCode() ?: 500);
+            if ($request->expectsJson()) {
+                return Response::error($e->getMessage(), (int) $e->getCode() ?: 500);
+            }
+            return $this->showLogin($e->getMessage(), $body['email']);
         }
 
         Auth::login($user, $user->getRole());

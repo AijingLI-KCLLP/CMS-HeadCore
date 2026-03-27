@@ -75,4 +75,8 @@ class Request {
         }
         return $data ?? [];
     }
+
+    public function getFormBody(): array {
+        return $_POST;
+    }
 }
